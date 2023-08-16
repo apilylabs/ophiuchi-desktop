@@ -25,8 +25,8 @@ export default function Home() {
             />
           </div>
           <div className="">
-            <button className="p-2 text-white bg-blue-600 rounded-lg">
-              Generate
+            <button className="px-4 py-2 text-white bg-blue-600 rounded-lg">
+              Start Docker Server
             </button>
           </div>
         </div>
