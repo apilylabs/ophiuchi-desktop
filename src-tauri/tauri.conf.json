@@ -59,7 +59,9 @@
         "height": 600,
         "resizable": true,
         "title": "ophiuchi",
-        "width": 800
+        "width": 800,
+        "minWidth": 480,
+        "minHeight": 640
       }
     ]
   }
