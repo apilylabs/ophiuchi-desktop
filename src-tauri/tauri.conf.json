@@ -12,7 +12,20 @@
   },
   "tauri": {
     "allowlist": {
-      "all": false
+      "all": false,
+      "fs": {
+        "scope": [
+          "$APPDATA/",
+          "$APPDATA/*",
+          "$APPDATA/**"
+        ],
+        "readDir": true,
+        "createDir": true,
+        "exists": true,
+        "writeFile": true,
+        "copyFile": true,
+        "readFile": true
+      }
     },
     "bundle": {
       "active": true,
@@ -29,7 +42,7 @@
         "icons/icon.icns",
         "icons/icon.ico"
       ],
-      "identifier": "com.tauri.dev",
+      "identifier": "dev.ophiuchi.desktop",
       "longDescription": "",
       "macOS": {
         "entitlements": null,

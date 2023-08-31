@@ -1,9 +1,9 @@
-import { HomeComponent } from "@/components/page-components/home";
+import { SetupComponent } from "@/components/page-components/setup";
 
 export default function Home() {
   return (
     <div className="min-h-screen">
-      <HomeComponent />
+      <SetupComponent />
     </div>
   );
 }
