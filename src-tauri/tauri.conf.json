@@ -7,7 +7,7 @@
     "distDir": "../out"
   },
   "package": {
-    "productName": "ophiuchi",
+    "productName": "Ophiuchi",
     "version": "0.1.0"
   },
   "tauri": {
@@ -71,7 +71,7 @@
         "fullscreen": false,
         "height": 600,
         "resizable": true,
-        "title": "ophiuchi",
+        "title": "Ophiuchi",
         "width": 800,
         "minWidth": 480,
         "minHeight": 640
