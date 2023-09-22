@@ -36,7 +36,9 @@
         "exists": true,
         "writeFile": true,
         "copyFile": true,
-        "readFile": true
+        "readFile": true,
+        "removeDir": true,
+        "removeFile": true
       },
       "shell": {
         "open": "/**/*",

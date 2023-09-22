@@ -1,10 +1,10 @@
 "use client";
 
+import { ConfigurationHelper } from "@/helpers/cert";
+import { confirm } from "@tauri-apps/api/dialog";
 import { BaseDirectory, readTextFile, writeTextFile } from "@tauri-apps/api/fs";
 import { appDataDir, resolveResource } from "@tauri-apps/api/path";
-// import { open as shellOpen } from "@tauri-apps/api/shell";
-import { confirm } from "@tauri-apps/api/dialog";
-import { Command } from "@tauri-apps/api/shell";
+import { Command, open as shellOpen } from "@tauri-apps/api/shell";
 import { useCallback, useEffect, useState } from "react";
 import EndpointAddSideComponent, { EndpointData } from "./add";
 
@@ -25,7 +25,7 @@ export default function EndpointListComponent() {
     });
 
     const appDataDirPath = await appDataDir();
-    // await shellOpen(appDataDirPath, "Terminal");
+
     const command = new Command("run-docker-compose", [
       "compose",
       "-f",
@@ -49,6 +49,13 @@ export default function EndpointListComponent() {
     console.log("pid:", child.pid);
   };
 
+  const onAddCertToKeychain = useCallback(async (endpoint: EndpointData) => {
+    // open
+    const appDataDirPath = await appDataDir();
+    const pemFilePath = `${appDataDirPath}/cert/${endpoint.hostname}/cert.pem`;
+    await shellOpen(pemFilePath);
+  }, []);
+
   const onDeleteEndpoint = useCallback(async (endpoint: EndpointData) => {
     const confirmed = await confirm(
       `Are you sure to delete ${endpoint.nickname}?`
@@ -56,7 +63,10 @@ export default function EndpointListComponent() {
     if (!confirmed) {
       return;
     }
-    console.log("delete");
+    const configHelper = new ConfigurationHelper();
+    configHelper.deleteCertificateFiles(endpoint.hostname);
+    configHelper.deleteConfigurationFiles(endpoint.hostname);
+
     const dir = BaseDirectory.AppData;
     const fileData = await readTextFile("Config/app.endpoint.json", {
       dir,
@@ -140,6 +150,7 @@ export default function EndpointListComponent() {
               <th className="border border-gray-600">Nickname</th>
               <th className="border border-gray-600">Hostname</th>
               <th className="border border-gray-600">Port</th>
+              <th className="border border-gray-600">Actions</th>
               <th className="border border-gray-600">Manage</th>
             </tr>
           </thead>
@@ -155,7 +166,15 @@ export default function EndpointListComponent() {
                   </td>
                   <td className="border border-gray-800">{endpoint.port}</td>
                   <td
-                    className="border border-gray-800"
+                    className="border border-gray-800 cursor-pointer underline"
+                    onClick={() => {
+                      onAddCertToKeychain(endpoint);
+                    }}
+                  >
+                    Add Cert to keychain
+                  </td>
+                  <td
+                    className="border border-gray-800 cursor-pointer underline"
                     onClick={() => {
                       onDeleteEndpoint(endpoint);
                     }}
