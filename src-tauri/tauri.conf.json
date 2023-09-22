@@ -13,11 +13,23 @@
   "tauri": {
     "allowlist": {
       "all": false,
+      "path": {
+        "all": true
+      },
+      "dialog": {
+        "all": false,
+        "ask": false,
+        "confirm": true,
+        "message": false,
+        "open": false,
+        "save": false
+      },
       "fs": {
         "scope": [
           "$APPDATA/",
           "$APPDATA/*",
-          "$APPDATA/**"
+          "$APPDATA/**",
+          "$RESOURCE/**"
         ],
         "readDir": true,
         "createDir": true,
@@ -25,6 +37,17 @@
         "writeFile": true,
         "copyFile": true,
         "readFile": true
+      },
+      "shell": {
+        "open": "/**/*",
+        "execute": true,
+        "scope": [
+          {
+            "name": "run-docker-compose",
+            "cmd": "docker",
+            "args": true
+          }
+        ]
       }
     },
     "bundle": {
@@ -51,7 +74,9 @@
         "providerShortName": null,
         "signingIdentity": null
       },
-      "resources": [],
+      "resources": [
+        "bundle/templates/**/*"
+      ],
       "shortDescription": "",
       "targets": "all",
       "windows": {

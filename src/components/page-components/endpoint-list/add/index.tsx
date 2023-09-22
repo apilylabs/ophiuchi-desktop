@@ -1,9 +1,9 @@
 "use client";
 
-import { CertificateHelper } from "@/helpers/cert";
+import { ConfigurationHelper } from "@/helpers/cert";
 import { Dialog, Transition } from "@headlessui/react";
 import { XMarkIcon } from "@heroicons/react/24/outline";
-import { Fragment, useCallback, useRef } from "react";
+import { Fragment, useCallback, useRef, useState } from "react";
 
 export type EndpointData = {
   nickname: string;
@@ -21,10 +21,12 @@ export default function EndpointAddSideComponent({
   onAdd: (data: EndpointData) => void;
 }) {
   const formRef = useRef<HTMLFormElement>(null);
+  const [isGenerating, setIsGenerating] = useState(false);
 
   const onAddButton = useCallback(async () => {
     if (!formRef.current) return;
     const formData = new FormData(formRef.current);
+    setIsGenerating(true);
     const data: EndpointData = {
       nickname: formData.get("nickname") as string,
       hostname: formData.get("hostname") as string,
@@ -33,16 +35,36 @@ export default function EndpointAddSideComponent({
     //
     onAdd(data);
     // gen cert
-    const helper = new CertificateHelper();
+    const helper = new ConfigurationHelper();
     const pems = await helper.generateCertificate(data.hostname);
-    console.log(pems);
-  }, [onAdd]);
+    const conf = await helper.generateConfigurationFiles(
+      data.hostname,
+      data.port
+    );
+
+    setIsGenerating(false);
+    setOpen(false);
+  }, [onAdd, setOpen]);
 
   return (
     <Transition.Root show={open} as={Fragment}>
-      <Dialog as="div" className="relative z-10" onClose={setOpen}>
-        <div className="fixed inset-0" />
-
+      <Dialog
+        as="div"
+        className="relative z-10"
+        onClose={() => {
+          // do nothing
+        }}
+      >
+        {isGenerating && (
+          <div className="fixed inset-0 z-10 bg-white bg-opacity-30 backdrop-blur-sm">
+            <div className="w-full h-full flex flex-col gap-8 justify-center items-center">
+              <div className="w-8 h-8 animate-ping rounded-full bg-green-500"></div>
+              <div className="text-xs">
+                Generating SSL certificate may take a while...
+              </div>
+            </div>
+          </div>
+        )}
         <div className="fixed inset-0 overflow-hidden">
           <div className="absolute inset-0 overflow-hidden">
             <div className="pointer-events-none fixed inset-y-0 right-0 flex max-w-full pl-10">

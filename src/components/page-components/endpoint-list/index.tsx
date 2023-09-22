@@ -1,6 +1,10 @@
 "use client";
 
 import { BaseDirectory, readTextFile, writeTextFile } from "@tauri-apps/api/fs";
+import { appDataDir, resolveResource } from "@tauri-apps/api/path";
+// import { open as shellOpen } from "@tauri-apps/api/shell";
+import { confirm } from "@tauri-apps/api/dialog";
+import { Command } from "@tauri-apps/api/shell";
 import { useCallback, useEffect, useState } from "react";
 import EndpointAddSideComponent, { EndpointData } from "./add";
 
@@ -8,6 +12,71 @@ export default function EndpointListComponent() {
   const [loaded, setLoaded] = useState(false);
   const [endpointList, setEndpointList] = useState([]);
   const [openSide, setOpenSide] = useState(false);
+
+  const startDocker = async () => {
+    // read file from bundle
+    const resourcePath = await resolveResource(
+      "bundle/templates/docker-compose.yml.template"
+    );
+    const dockerComposeTemplate = await readTextFile(resourcePath);
+
+    await writeTextFile(`docker-compose.yml`, dockerComposeTemplate, {
+      dir: BaseDirectory.AppData,
+    });
+
+    const appDataDirPath = await appDataDir();
+    // await shellOpen(appDataDirPath, "Terminal");
+    const command = new Command("run-docker-compose", [
+      "compose",
+      "-f",
+      `${appDataDirPath}/docker-compose.yml`,
+      "up",
+      "-d",
+    ]);
+    command.on("close", (data) => {
+      console.log(
+        `command finished with code ${data.code} and signal ${data.signal}`
+      );
+    });
+    command.on("error", (error) => console.error(`command error: "${error}"`));
+    command.stdout.on("data", (line) =>
+      console.log(`command stdout: "${line}"`)
+    );
+    command.stderr.on("data", (line) =>
+      console.log(`command stderr: "${line}"`)
+    );
+    const child = await command.spawn();
+    console.log("pid:", child.pid);
+  };
+
+  const onDeleteEndpoint = useCallback(async (endpoint: EndpointData) => {
+    const confirmed = await confirm(
+      `Are you sure to delete ${endpoint.nickname}?`
+    );
+    if (!confirmed) {
+      return;
+    }
+    console.log("delete");
+    const dir = BaseDirectory.AppData;
+    const fileData = await readTextFile("Config/app.endpoint.json", {
+      dir,
+    });
+    const endpointList = JSON.parse(fileData);
+    // delete from list
+    const index = endpointList.findIndex((e: EndpointData) => {
+      return e.nickname === endpoint.nickname;
+    });
+    endpointList.splice(index, 1);
+    // write to file
+    await writeTextFile(
+      "Config/app.endpoint.json",
+      JSON.stringify(endpointList),
+      {
+        dir,
+      }
+    );
+    setEndpointList(endpointList);
+  }, []);
 
   const prepareConfigPage = useCallback(async () => {
     const dir = BaseDirectory.AppData;
@@ -56,6 +125,14 @@ export default function EndpointListComponent() {
       <div className="p-4">
         <h1 className="text-2xl">Endopoint List</h1>
       </div>
+      <div
+        className="p-4 underline cursor-pointer"
+        onClick={() => {
+          startDocker();
+        }}
+      >
+        Start Docker
+      </div>
       <div className="p-4">
         <table className="table-auto border-separate border border-gray-500 w-full">
           <thead>
@@ -77,7 +154,14 @@ export default function EndpointListComponent() {
                     {endpoint.hostname}
                   </td>
                   <td className="border border-gray-800">{endpoint.port}</td>
-                  <td className="border border-gray-800">Edit</td>
+                  <td
+                    className="border border-gray-800"
+                    onClick={() => {
+                      onDeleteEndpoint(endpoint);
+                    }}
+                  >
+                    Delete
+                  </td>
                 </tr>
               );
             })}

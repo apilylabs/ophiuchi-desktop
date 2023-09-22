@@ -1,0 +1,30 @@
+upstream internal {
+    server host.docker.internal:{PORT};
+}
+
+server {
+    # domain name
+    server_name {DOMAIN_NAME};
+
+    listen 443 ssl;
+    listen [::]:443 ssl;
+
+    # cert path
+    ssl_certificate /usr/local/ssl/cert/{DOMAIN_NAME}/cert.pem;
+    ssl_certificate_key /usr/local/ssl/cert/{DOMAIN_NAME}/private.key;
+
+    
+    location / {
+        proxy_buffers 16 4k;
+        proxy_buffer_size 2k;
+        proxy_http_version 1.1;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        
+        # websockets 지원
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection "Upgrade";
+        
+        proxy_pass         http://internal;
+    }   
+}
