@@ -7,19 +7,24 @@ import { appDataDir, resolveResource } from "@tauri-apps/api/path";
 import { Command, open as shellOpen } from "@tauri-apps/api/shell";
 import { useCallback, useEffect, useState } from "react";
 import EndpointAddSideComponent, { EndpointData } from "./add";
+import DockerLogModal from "./docker-log";
 
 export default function EndpointListComponent() {
   const [loaded, setLoaded] = useState(false);
   const [endpointList, setEndpointList] = useState([]);
   const [openSide, setOpenSide] = useState(false);
+  const [dockerModalOpen, setDockerModalOpen] = useState(false);
+  const [dockerProcessStream, setDockerProcessStream] = useState("");
 
   const startDocker = async () => {
     // read file from bundle
+    setDockerModalOpen(false);
     const resourcePath = await resolveResource(
       "bundle/templates/docker-compose.yml.template"
     );
     const dockerComposeTemplate = await readTextFile(resourcePath);
 
+    setDockerProcessStream(dockerComposeTemplate);
     await writeTextFile(`docker-compose.yml`, dockerComposeTemplate, {
       dir: BaseDirectory.AppData,
     });
@@ -28,25 +33,30 @@ export default function EndpointListComponent() {
 
     const command = new Command("run-docker-compose", [
       "compose",
+      "-v",
       "-f",
       `${appDataDirPath}/docker-compose.yml`,
       "up",
       "-d",
     ]);
     command.on("close", (data) => {
-      console.log(
-        `command finished with code ${data.code} and signal ${data.signal}`
+      setDockerProcessStream(
+        (prev) =>
+          prev +
+          `\ncommand finished with code ${data.code} and signal ${data.signal}`
       );
     });
     command.on("error", (error) => console.error(`command error: "${error}"`));
     command.stdout.on("data", (line) =>
-      console.log(`command stdout: "${line}"`)
+      setDockerProcessStream((prev) => prev + `\n${line}`)
     );
     command.stderr.on("data", (line) =>
-      console.log(`command stderr: "${line}"`)
+      setDockerProcessStream((prev) => prev + `\nERR:${line}`)
     );
     const child = await command.spawn();
-    console.log("pid:", child.pid);
+    setDockerProcessStream(`command : ${command}`);
+    setDockerProcessStream(`command spawned with pid ${child.pid}`);
+    setDockerModalOpen(true);
   };
 
   const onAddCertToKeychain = useCallback(async (endpoint: EndpointData) => {
@@ -125,6 +135,7 @@ export default function EndpointListComponent() {
 
   return (
     <div className="flex flex-col min-h-screen py-2 text-gray-100 bg-gray-900">
+      <DockerLogModal stream={dockerProcessStream} isOpen={dockerModalOpen} />
       <EndpointAddSideComponent
         open={openSide}
         setOpen={setOpenSide}
