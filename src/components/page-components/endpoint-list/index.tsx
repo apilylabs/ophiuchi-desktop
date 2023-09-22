@@ -51,7 +51,7 @@ export default function EndpointListComponent() {
       setDockerProcessStream((prev) => prev + `\n${line}`)
     );
     command.stderr.on("data", (line) =>
-      setDockerProcessStream((prev) => prev + `\nERR:${line}`)
+      setDockerProcessStream((prev) => prev + `\n:${line}`)
     );
     const child = await command.spawn();
     setDockerProcessStream(`command : ${command}`);
