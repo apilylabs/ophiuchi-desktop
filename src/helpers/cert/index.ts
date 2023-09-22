@@ -56,7 +56,15 @@ export class ConfigurationHelper {
     const nginxConfigTemplate = await readTextFile(nginxConfigPath);
 
     // replace all occurences of {DOMAIN_NAME} with hostname
-    const nginxConfig = nginxConfigTemplate.replace(/{DOMAIN_NAME}/g, hostname);
+    const upstreamSuffixUpdated = nginxConfigTemplate.replace(
+      /{UPSTREAM_SUFFIX}/g,
+      hostname.replace(/\./g, "_")
+    );
+    // replace all occurences of {DOMAIN_NAME} with hostname
+    const nginxConfig = upstreamSuffixUpdated.replace(
+      /{DOMAIN_NAME}/g,
+      hostname
+    );
     // replace all occurences of {PORT} with port
     const nginxConfigWithPort = nginxConfig.replace(/{PORT}/g, port.toString());
 
@@ -79,7 +87,7 @@ export class ConfigurationHelper {
       var pems = selfsigned.generate(attrs, {
         days: 3650,
         algorithm: "sha256",
-        keySize: 2048,
+        keySize: 4096,
         extensions: [
           {
             name: "subjectAltName",

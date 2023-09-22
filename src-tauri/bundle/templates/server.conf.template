@@ -1,4 +1,4 @@
-upstream internal {
+upstream internal_{UPSTREAM_SUFFIX} {
     server host.docker.internal:{PORT};
 }
 
@@ -25,6 +25,6 @@ server {
         proxy_set_header Upgrade $http_upgrade;
         proxy_set_header Connection "Upgrade";
         
-        proxy_pass         http://internal;
+        proxy_pass         http://internal_{UPSTREAM_SUFFIX};
     }   
 }
