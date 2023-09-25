@@ -22,6 +22,7 @@ export default function EndpointListComponent() {
     const resourcePath = await resolveResource(
       "bundle/templates/docker-compose.yml.template"
     );
+    console.log(`resourcePath: ${resourcePath}`);
     const dockerComposeTemplate = await readTextFile(resourcePath);
 
     setDockerProcessStream(dockerComposeTemplate);

@@ -7,6 +7,7 @@ fn my_custom_command() {
 }
 
 fn main() {
+  fix_path_env::fix();
   tauri::Builder::default()
   .invoke_handler(tauri::generate_handler![my_custom_command])
     .run(tauri::generate_context!())

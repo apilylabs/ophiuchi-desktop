@@ -1,6 +1,6 @@
 [package]
 name = "app"
-version = "0.1.2"
+version = "0.1.3"
 description = "Ophiuchi - Developers Toolkit"
 authors = ["Jaeha Kim"]
 license = "Private"
@@ -18,6 +18,11 @@ tauri-build = { version = "1.4.0", features = [] }
 serde_json = "1.0"
 serde = { version = "1.0", features = ["derive"] }
 tauri = { version = "1.4.0", features = [ "fs-remove-file", "fs-remove-dir", "dialog-confirm", "shell-execute", "shell-open", "path-all", "fs-create-dir", "fs-exists", "fs-read-dir", "fs-read-file", "fs-copy-file", "fs-write-file"] }
+
+[dependencies.fix-path-env]
+git = "https://github.com/tauri-apps/fix-path-env-rs"
+#tag = "fix-path-env-v0.1.0"
+#branch = "dev"
 
 [features]
 # this feature is used for production builds or when `devPath` points to the filesystem and the built-in dev server is disabled.
