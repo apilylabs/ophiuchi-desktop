@@ -1,6 +1,7 @@
 "use client";
 
-import { ConfigurationHelper } from "@/helpers/cert";
+import { CertificateManager } from "@/helpers/certificate-manager";
+import { EndpointManager } from "@/helpers/endpoint-manager";
 import { confirm } from "@tauri-apps/api/dialog";
 import { BaseDirectory, readTextFile, writeTextFile } from "@tauri-apps/api/fs";
 import { appDataDir, resolveResource } from "@tauri-apps/api/path";
@@ -67,63 +68,51 @@ export default function EndpointListComponent() {
     await shellOpen(pemFilePath);
   }, []);
 
-  const onDeleteEndpoint = useCallback(async (endpoint: EndpointData) => {
-    const confirmed = await confirm(
-      `Are you sure to delete ${endpoint.nickname}?`
-    );
-    if (!confirmed) {
-      return;
-    }
-    const configHelper = new ConfigurationHelper();
-    configHelper.deleteCertificateFiles(endpoint.hostname);
-    configHelper.deleteConfigurationFiles(endpoint.hostname);
-
-    const dir = BaseDirectory.AppData;
-    const fileData = await readTextFile("Config/app.endpoint.json", {
-      dir,
-    });
-    const endpointList = JSON.parse(fileData);
-    // delete from list
-    const index = endpointList.findIndex((e: EndpointData) => {
-      return e.nickname === endpoint.nickname;
-    });
-    endpointList.splice(index, 1);
-    // write to file
-    await writeTextFile(
-      "Config/app.endpoint.json",
-      JSON.stringify(endpointList),
-      {
-        dir,
-      }
-    );
-    setEndpointList(endpointList);
+  const openAppData = useCallback(async () => {
+    const appDataDirPath = await appDataDir();
+    shellOpen(appDataDirPath);
   }, []);
 
-  const prepareConfigPage = useCallback(async () => {
-    const dir = BaseDirectory.AppData;
+  const onDeleteEndpoint = useCallback(
+    async (endpoint: EndpointData) => {
+      const confirmed = await confirm(
+        `Are you sure to delete ${endpoint.nickname}?`
+      );
+      if (!confirmed) {
+        return;
+      }
+      const configHelper = new CertificateManager();
+      const endpointManager = EndpointManager.sharedManager();
+      configHelper.deleteCertificateFiles(endpoint.hostname);
+      configHelper.deleteNginxConfigurationFiles(endpoint.hostname);
 
-    const fileData = await readTextFile("Config/app.endpoint.json", {
-      dir,
-    });
-    console.log(fileData);
-    setEndpointList(JSON.parse(fileData));
+      const index = endpointList.findIndex((e: EndpointData) => {
+        return e.nickname === endpoint.nickname;
+      });
+      endpointList.splice(index, 1);
+
+      endpointManager.save(endpointList);
+      setEndpointList(endpointList);
+    },
+    [endpointList]
+  );
+
+  const prepareConfigPage = useCallback(async () => {
+    const mgr = EndpointManager.sharedManager();
+    const list = await mgr.get();
+    setEndpointList(list);
     setLoaded(true);
   }, []);
 
   const addEndpoint = useCallback(async (data: EndpointData) => {
-    const dir = BaseDirectory.AppData;
-    const fileData = await readTextFile("Config/app.endpoint.json", {
-      dir,
-    });
-    const endpointList = JSON.parse(fileData);
+    const mgr = EndpointManager.sharedManager();
+    const endpointList = await mgr.get();
+    if (endpointList.find((e: EndpointData) => e.hostname === data.hostname)) {
+      // already exists
+      return;
+    }
     endpointList.push(data);
-    await writeTextFile(
-      "Config/app.endpoint.json",
-      JSON.stringify(endpointList),
-      {
-        dir,
-      }
-    );
+    mgr.save(endpointList);
     setEndpointList(endpointList);
   }, []);
 
@@ -154,6 +143,14 @@ export default function EndpointListComponent() {
         }}
       >
         Start Docker
+      </div>
+      <div
+        className="p-4 underline cursor-pointer"
+        onClick={() => {
+          openAppData();
+        }}
+      >
+        Open Docker-compose folder
       </div>
       <div className="p-4">
         <table className="table-auto border-separate border border-gray-500 w-full">

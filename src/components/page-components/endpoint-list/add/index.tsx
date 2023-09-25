@@ -1,6 +1,6 @@
 "use client";
 
-import { ConfigurationHelper } from "@/helpers/cert";
+import { CertificateManager } from "@/helpers/certificate-manager";
 import { Dialog, Transition } from "@headlessui/react";
 import { XMarkIcon } from "@heroicons/react/24/outline";
 import { Fragment, useCallback, useRef, useState } from "react";
@@ -35,9 +35,9 @@ export default function EndpointAddSideComponent({
     //
     onAdd(data);
     // gen cert
-    const helper = new ConfigurationHelper();
+    const helper = new CertificateManager();
     const pems = await helper.generateCertificate(data.hostname);
-    const conf = await helper.generateConfigurationFiles(
+    const conf = await helper.generateNginxConfigurationFiles(
       data.hostname,
       data.port
     );

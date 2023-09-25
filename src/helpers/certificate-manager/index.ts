@@ -9,7 +9,7 @@ import {
 import { resolveResource } from "@tauri-apps/api/path";
 import * as selfsigned from "selfsigned";
 
-export class ConfigurationHelper {
+export class CertificateManager {
   async deleteCertificateFiles(hostname: string) {
     await removeDir(`cert/${hostname}`, {
       dir: BaseDirectory.AppData,
@@ -17,14 +17,14 @@ export class ConfigurationHelper {
     });
   }
 
-  async deleteConfigurationFiles(hostname: string) {
+  async deleteNginxConfigurationFiles(hostname: string) {
     await removeDir(`conf/conf.d/${hostname}.conf`, {
       dir: BaseDirectory.AppData,
       recursive: true,
     });
   }
 
-  async generateConfigurationFiles(hostname: string, port: number) {
+  async generateNginxConfigurationFiles(hostname: string, port: number) {
     // save to file
     if (
       !(await exists(`conf/conf.d`, {
