@@ -143,14 +143,14 @@ export default function EndpointListComponent() {
         >
           Start Docker
         </div>
-        <div
+        {/* <div
           className="p-2 underline cursor-pointer text-sm"
           onClick={() => {
             openAppData();
           }}
         >
           Open docker-compose folder
-        </div>
+        </div> */}
       </div>
       <div className="p-4">
         <h1 className="text-2xl">Endopoint List</h1>
