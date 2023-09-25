@@ -133,25 +133,29 @@ export default function EndpointListComponent() {
           addEndpoint(data);
         }}
       />
+      <div className="flex gap-2 p-4">
+        <div
+          className="p-2 bg-white text-gray-700 rounded-md cursor-pointer hover:bg-gray-100 text-sm"
+          onClick={() => {
+            if (endpointList.length === 0) return;
+            startDocker();
+          }}
+        >
+          Start Docker
+        </div>
+        <div
+          className="p-2 underline cursor-pointer text-sm"
+          onClick={() => {
+            openAppData();
+          }}
+        >
+          Open docker-compose folder
+        </div>
+      </div>
       <div className="p-4">
         <h1 className="text-2xl">Endopoint List</h1>
       </div>
-      <div
-        className="p-4 underline cursor-pointer"
-        onClick={() => {
-          startDocker();
-        }}
-      >
-        Start Docker
-      </div>
-      <div
-        className="p-4 underline cursor-pointer"
-        onClick={() => {
-          openAppData();
-        }}
-      >
-        Open Docker-compose folder
-      </div>
+
       <div className="p-4">
         <table className="table-auto border-separate border border-gray-500 w-full">
           <thead>
@@ -196,9 +200,9 @@ export default function EndpointListComponent() {
           </tbody>
         </table>
         {shouldShowAddButton && (
-          <div className="p-4">
+          <div className="py-4">
             <button
-              className="px-4 py-2 text-white bg-blue-500 rounded hover:bg-blue-600"
+              className="px-4 py-2 text-white bg-blue-500 rounded hover:bg-blue-600 text-sm"
               onClick={() => {
                 setOpenSide(true);
               }}

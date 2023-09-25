@@ -65,7 +65,7 @@ export default function EndpointAddSideComponent({
             </div>
           </div>
         )}
-        <div className="fixed inset-0 overflow-hidden">
+        <div className="fixed inset-0 overflow-hidden bg-slate-950 bg-opacity-50 backdrop-blur-sm">
           <div className="absolute inset-0 overflow-hidden">
             <div className="pointer-events-none fixed inset-y-0 right-0 flex max-w-full pl-10">
               <Transition.Child
@@ -134,7 +134,7 @@ export default function EndpointAddSideComponent({
                           />
                         </div>
                         <div className="">
-                          <button className="px-4 py-2 text-white bg-blue-700 rounded-lg">
+                          <button className="px-4 py-2 text-white bg-blue-700 rounded-md">
                             Add
                           </button>
                         </div>
