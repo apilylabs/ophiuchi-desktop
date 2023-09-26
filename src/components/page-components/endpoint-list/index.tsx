@@ -19,9 +19,36 @@ export default function EndpointListComponent() {
   const [dockerModalOpen, setDockerModalOpen] = useState(false);
   const [dockerProcessStream, setDockerProcessStream] = useState("");
 
+  const stopDocker = async () => {
+    const appDataDirPath = await appDataDir();
+    const command = new Command("stop-docker-compose", [
+      "compose",
+      "-f",
+      `${appDataDirPath}/docker-compose.yml`,
+      "down",
+    ]);
+    command.on("close", (data) => {
+      setDockerProcessStream(
+        (prev) =>
+          prev +
+          `\ncommand finished with code ${data.code} and signal ${data.signal}`
+      );
+    });
+    command.on("error", (error) => console.error(`command error: "${error}"`));
+    command.stdout.on("data", (line) =>
+      setDockerProcessStream((prev) => prev + `\n${line}`)
+    );
+    command.stderr.on("data", (line) =>
+      setDockerProcessStream((prev) => prev + `\n:${line}`)
+    );
+    const child = await command.spawn();
+    await new Promise((resolve) => setTimeout(resolve, 1000));
+    setDockerModalOpen(true);
+  };
   const startDocker = async () => {
     // read file from bundle
     setDockerModalOpen(false);
+    await stopDocker();
     const resourcePath = await resolveResource(
       "bundle/templates/docker-compose.yml.template"
     );
@@ -115,17 +142,23 @@ export default function EndpointListComponent() {
     setLoaded(true);
   }, []);
 
-  const addEndpoint = useCallback(async (data: EndpointData) => {
-    const mgr = EndpointManager.sharedManager();
-    const endpointList = await mgr.get();
-    if (endpointList.find((e: EndpointData) => e.hostname === data.hostname)) {
-      // already exists
-      return;
-    }
-    endpointList.push(data);
-    mgr.save(endpointList);
-    setEndpointList(endpointList);
-  }, []);
+  const addEndpoint = useCallback(
+    async (data: EndpointData) => {
+      const mgr = EndpointManager.sharedManager();
+      const endpointList = await mgr.get();
+      if (
+        endpointList.find((e: EndpointData) => e.hostname === data.hostname)
+      ) {
+        // already exists
+        return;
+      }
+      endpointList.push(data);
+      mgr.save(endpointList);
+      setEndpointList(endpointList);
+      onAddCertToKeychain(data);
+    },
+    [onAddCertToKeychain]
+  );
 
   useEffect(() => {
     prepareConfigPage();

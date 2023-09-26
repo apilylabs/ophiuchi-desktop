@@ -64,12 +64,12 @@ export default function EndpointListTable({
                   >
                     Port
                   </th>
-                  <th
+                  {/* <th
                     scope="col"
                     className="px-3 py-3.5 text-left text-sm font-semibold text-white"
                   >
                     Actions
-                  </th>
+                  </th> */}
                   <th scope="col" className="relative py-3.5 pl-3 pr-4 sm:pr-0">
                     <span className="sr-only">Edit</span>
                   </th>
@@ -87,7 +87,7 @@ export default function EndpointListTable({
                     <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-300">
                       {endpoint.port}
                     </td>
-                    <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-300">
+                    {/* <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-300">
                       <p
                         className="underline cursor-pointer"
                         onClick={() => {
@@ -96,7 +96,7 @@ export default function EndpointListTable({
                       >
                         Trust SSL Cert
                       </p>
-                    </td>
+                    </td> */}
                     <td className="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-0">
                       <p
                         onClick={() => {

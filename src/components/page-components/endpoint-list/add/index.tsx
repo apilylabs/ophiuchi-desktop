@@ -14,7 +14,7 @@ export type EndpointData = {
 export default function EndpointAddSideComponent({
   open,
   setOpen,
-  onAdd,
+  onAdd: onAddFinish,
 }: {
   open: boolean;
   setOpen: (open: boolean) => void;
@@ -33,18 +33,18 @@ export default function EndpointAddSideComponent({
       port: parseInt(formData.get("port") as string),
     };
     //
-    onAdd(data);
     // gen cert
-    const helper = new CertificateManager();
-    const pems = await helper.generateCertificate(data.hostname);
-    const conf = await helper.generateNginxConfigurationFiles(
+    const certMgr = new CertificateManager();
+    const pems = await certMgr.generateCertificate(data.hostname);
+    const conf = await certMgr.generateNginxConfigurationFiles(
       data.hostname,
       data.port
     );
 
     setIsGenerating(false);
     setOpen(false);
-  }, [onAdd, setOpen]);
+    onAddFinish(data);
+  }, [onAddFinish, setOpen]);
 
   return (
     <Transition.Root show={open} as={Fragment}>

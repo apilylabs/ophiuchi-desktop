@@ -48,6 +48,11 @@
             "name": "run-docker-compose",
             "cmd": "docker",
             "args": true
+          },
+          {
+            "name": "stop-docker-compose",
+            "cmd": "docker",
+            "args": true
           }
         ]
       }

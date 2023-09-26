@@ -18,7 +18,7 @@ fn add_cert_to_keychain(pem_file_path: String) {
             // Add arguments to the command
             command
                 .arg("add-trusted-cert")
-                .arg("-d")
+                // .arg("-d")
                 .arg("-k")
                 .arg(&keychain_path) // Use the resolved keychain path
                 .arg(&pem_file_path); // Use the provided PEM file path
