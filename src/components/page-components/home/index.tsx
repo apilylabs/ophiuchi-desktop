@@ -2,13 +2,11 @@
 
 // When using the Tauri API npm package:
 import { BaseDirectory, writeTextFile } from "@tauri-apps/api/fs";
-import { invoke } from "@tauri-apps/api/tauri";
 import { useCallback, useEffect } from "react";
 // Write a text file to the `$APPCONFIG/app.conf` path
 
 const onStartServer = () => {
   // Invoke the command
-  invoke("my_custom_command");
 };
 const loadTest = async () => {
   const res = await fetch("http://localhost:8899/api/test");

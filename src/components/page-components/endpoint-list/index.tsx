@@ -2,6 +2,7 @@
 
 import { CertificateManager } from "@/helpers/certificate-manager";
 import { EndpointManager } from "@/helpers/endpoint-manager";
+import { invoke } from "@tauri-apps/api";
 import { confirm } from "@tauri-apps/api/dialog";
 import { BaseDirectory, readTextFile, writeTextFile } from "@tauri-apps/api/fs";
 import { appDataDir, resolveResource } from "@tauri-apps/api/path";
@@ -63,10 +64,15 @@ export default function EndpointListComponent() {
   };
 
   const onAddCertToKeychain = useCallback(async (endpoint: EndpointData) => {
-    // open
     const appDataDirPath = await appDataDir();
-    const pemFilePath = `${appDataDirPath}/cert/${endpoint.hostname}/cert.pem`;
-    await shellOpen(pemFilePath);
+    const pemFilePath = `${appDataDirPath}cert/${endpoint.hostname}/cert.pem`;
+    // support for whitespaces in path
+    // const whiteSpaced = pemFilePath.replace(/ /g, "\\ ");
+    invoke("add_cert_to_keychain", {
+      pem_file_path: `${pemFilePath}`,
+    });
+    // setPasswordModalOpen(true);
+    // setCurrentEndpoint(endpoint);
   }, []);
 
   const openAppData = useCallback(async () => {
@@ -84,16 +90,20 @@ export default function EndpointListComponent() {
       }
       const configHelper = new CertificateManager();
       const endpointManager = EndpointManager.sharedManager();
+      invoke("remove_cert_from_keychain", {
+        name: `${endpoint.hostname}`,
+      });
       configHelper.deleteCertificateFiles(endpoint.hostname);
       configHelper.deleteNginxConfigurationFiles(endpoint.hostname);
 
-      const index = endpointList.findIndex((e: EndpointData) => {
-        return e.nickname === endpoint.nickname;
+      const copiedList = [...endpointList];
+      const index = copiedList.findIndex((e: EndpointData) => {
+        return e.hostname === endpoint.hostname;
       });
-      endpointList.splice(index, 1);
+      copiedList.splice(index, 1);
 
-      endpointManager.save(endpointList);
-      setEndpointList(endpointList);
+      endpointManager.save(copiedList);
+      setEndpointList(copiedList);
     },
     [endpointList]
   );
@@ -145,14 +155,14 @@ export default function EndpointListComponent() {
           >
             Start Docker
           </div>
-          {/* <div
-          className="p-2 underline cursor-pointer text-sm"
-          onClick={() => {
-            openAppData();
-          }}
-        >
-          Open docker-compose folder
-        </div> */}
+          <div
+            className="p-2 underline cursor-pointer text-sm"
+            onClick={() => {
+              openAppData();
+            }}
+          >
+            Open docker-compose folder
+          </div>
           <a
             className="p-2 underline cursor-pointer text-sm"
             href={`https://heavenly-tent-fff.notion.site/Ophiuchi-Developers-Toolkit-734dc4f766fe40aebfe0da3cbbc304f5?pvs=4`}

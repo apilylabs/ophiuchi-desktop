@@ -4,6 +4,7 @@ import {
   exists,
   readTextFile,
   removeDir,
+  removeFile,
   writeTextFile,
 } from "@tauri-apps/api/fs";
 import { resolveResource } from "@tauri-apps/api/path";
@@ -18,9 +19,8 @@ export class CertificateManager {
   }
 
   async deleteNginxConfigurationFiles(hostname: string) {
-    await removeDir(`conf/conf.d/${hostname}.conf`, {
+    await removeFile(`conf/conf.d/${hostname}.conf`, {
       dir: BaseDirectory.AppData,
-      recursive: true,
     });
   }
 
@@ -87,7 +87,7 @@ export class CertificateManager {
       var pems = selfsigned.generate(attrs, {
         days: 3650,
         algorithm: "sha256",
-        keySize: 4096,
+        keySize: 1024,
         extensions: [
           {
             name: "subjectAltName",
