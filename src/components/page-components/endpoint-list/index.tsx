@@ -21,6 +21,7 @@ export default function EndpointListComponent() {
   const [dockerProcessStream, setDockerProcessStream] = useState("");
   const [passwordModalShown, setPasswordModalOpen] = useState(false);
   const [currentEndpoint, setCurrentEndpoint] = useState<EndpointData>();
+  const [currentMode, setCurrentMode] = useState<"add" | "delete">("add");
 
   const stopDocker = async () => {
     const appDataDirPath = await appDataDir();
@@ -115,6 +116,16 @@ export default function EndpointListComponent() {
     []
   );
 
+  const onDeleteFromHosts = useCallback(
+    async (endpoint: EndpointData, password: string) => {
+      invoke("delete_line_from_hosts", {
+        hostname: endpoint.hostname,
+        password: password,
+      });
+    },
+    []
+  );
+
   const openAppData = useCallback(async () => {
     const appDataDirPath = await appDataDir();
     shellOpen(appDataDirPath);
@@ -128,6 +139,7 @@ export default function EndpointListComponent() {
       if (!confirmed) {
         return;
       }
+
       const configHelper = new CertificateManager();
       const endpointManager = EndpointManager.sharedManager();
       invoke("remove_cert_from_keychain", {
@@ -144,6 +156,8 @@ export default function EndpointListComponent() {
 
       endpointManager.save(copiedList);
       setEndpointList(copiedList);
+      setCurrentMode("delete");
+      setPasswordModalOpen(true);
     },
     [endpointList]
   );
@@ -157,6 +171,7 @@ export default function EndpointListComponent() {
 
   const addEndpoint = useCallback(
     async (data: EndpointData) => {
+      setCurrentMode("add");
       const mgr = EndpointManager.sharedManager();
       const endpointList = await mgr.get();
       if (
@@ -198,7 +213,11 @@ export default function EndpointListComponent() {
           onConfirm={function (password: string): void {
             setPasswordModalOpen(false);
             if (!currentEndpoint) return;
-            onAddToHosts(currentEndpoint, password);
+            if (currentMode === "add") {
+              onAddToHosts(currentEndpoint, password);
+            } else {
+              onDeleteFromHosts(currentEndpoint, password);
+            }
           }}
         />
         <div className="flex gap-2 px-4 py-4">
