@@ -10,6 +10,7 @@ import { Command, open as shellOpen } from "@tauri-apps/api/shell";
 import { useCallback, useEffect, useState } from "react";
 import EndpointAddSideComponent, { EndpointData } from "./add";
 import DockerLogModal from "./docker-log";
+import RequestPasswordModal from "./request-certificate-trust";
 import EndpointListTable from "./table";
 
 export default function EndpointListComponent() {
@@ -18,6 +19,8 @@ export default function EndpointListComponent() {
   const [openSide, setOpenSide] = useState(false);
   const [dockerModalOpen, setDockerModalOpen] = useState(false);
   const [dockerProcessStream, setDockerProcessStream] = useState("");
+  const [passwordModalShown, setPasswordModalOpen] = useState(false);
+  const [currentEndpoint, setCurrentEndpoint] = useState<EndpointData>();
 
   const stopDocker = async () => {
     const appDataDirPath = await appDataDir();
@@ -102,6 +105,16 @@ export default function EndpointListComponent() {
     // setCurrentEndpoint(endpoint);
   }, []);
 
+  const onAddToHosts = useCallback(
+    async (endpoint: EndpointData, password: string) => {
+      invoke("add_line_to_hosts", {
+        hostname: endpoint.hostname,
+        password: password,
+      });
+    },
+    []
+  );
+
   const openAppData = useCallback(async () => {
     const appDataDirPath = await appDataDir();
     shellOpen(appDataDirPath);
@@ -156,6 +169,7 @@ export default function EndpointListComponent() {
       mgr.save(endpointList);
       setEndpointList(endpointList);
       onAddCertToKeychain(data);
+      setPasswordModalOpen(true);
     },
     [onAddCertToKeychain]
   );
@@ -175,7 +189,16 @@ export default function EndpointListComponent() {
           open={openSide}
           setOpen={setOpenSide}
           onAdd={(data) => {
+            setCurrentEndpoint(data);
             addEndpoint(data);
+          }}
+        />
+        <RequestPasswordModal
+          isOpen={passwordModalShown}
+          onConfirm={function (password: string): void {
+            setPasswordModalOpen(false);
+            if (!currentEndpoint) return;
+            onAddToHosts(currentEndpoint, password);
           }}
         />
         <div className="flex gap-2 px-4 py-4">

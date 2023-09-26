@@ -2,7 +2,7 @@ import { Dialog, Transition } from "@headlessui/react";
 import { ExclamationTriangleIcon } from "@heroicons/react/24/outline";
 import { Fragment, useEffect, useRef, useState } from "react";
 
-export default function RequestCertificateTrust({
+export default function RequestPasswordModal({
   isOpen,
   onConfirm,
   onClose,
