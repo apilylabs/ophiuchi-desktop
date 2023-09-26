@@ -125,7 +125,7 @@ export default function EndpointListComponent() {
   const shouldShowAddButton = loaded;
 
   return (
-    <div className="flex flex-col min-h-screen py-2 text-gray-100 bg-gray-900">
+    <div className="flex flex-col min-h-screen text-gray-100 bg-gray-900">
       <div className="bg-gray-700 shadow-md">
         <DockerLogModal stream={dockerProcessStream} isOpen={dockerModalOpen} />
         <EndpointAddSideComponent
