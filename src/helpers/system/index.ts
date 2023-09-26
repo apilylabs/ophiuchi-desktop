@@ -12,7 +12,8 @@ export class SystemHelper {
   }
 
   async boot() {
-    EndpointManager.sharedManager();
+    const mgr = EndpointManager.sharedManager();
+    await mgr.boot();
     await new Promise((resolve) => setTimeout(resolve, 2000));
   }
 }

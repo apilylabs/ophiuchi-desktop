@@ -13,11 +13,7 @@ const FILE_NAME = "app.endpoint.json";
 let mgr: any = undefined;
 
 export class EndpointManager implements IFileManagerBase {
-  constructor() {
-    this.boot().then(() => {
-      this.migrate();
-    });
-  }
+  constructor() {}
 
   static sharedManager(): EndpointManager {
     if (!mgr) {
@@ -32,9 +28,16 @@ export class EndpointManager implements IFileManagerBase {
 
   async boot() {
     const dir = this.getBaseDir();
-    const dirExist = await exists("", { dir });
+    const dirExist = await exists(CONFIG_DIR, { dir });
     if (!dirExist) {
-      await createDir("", { dir });
+      await createDir(CONFIG_DIR, { dir });
+    }
+    // create file if not exist
+    const fileExist = await exists(`${CONFIG_DIR}/${FILE_NAME}`, { dir });
+    if (!fileExist) {
+      await writeTextFile(`${CONFIG_DIR}/${FILE_NAME}`, JSON.stringify([]), {
+        dir,
+      });
     }
   }
 
