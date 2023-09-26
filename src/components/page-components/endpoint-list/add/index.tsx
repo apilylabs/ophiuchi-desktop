@@ -65,7 +65,7 @@ export default function EndpointAddSideComponent({
             </div>
           </div>
         )}
-        <div className="fixed inset-0 overflow-hidden bg-slate-950 bg-opacity-50 backdrop-blur-sm">
+        <div className="fixed inset-0 overflow-hidden bg-gray-950 bg-opacity-50 backdrop-blur-sm">
           <div className="absolute inset-0 overflow-hidden">
             <div className="pointer-events-none fixed inset-y-0 right-0 flex max-w-full pl-10">
               <Transition.Child
@@ -78,7 +78,7 @@ export default function EndpointAddSideComponent({
                 leaveTo="translate-x-full"
               >
                 <Dialog.Panel className="pointer-events-auto w-screen max-w-md">
-                  <div className="flex h-full flex-col overflow-y-scroll bg-blue-950 py-6 shadow-xl">
+                  <div className="flex h-full flex-col overflow-y-scroll bg-gray-950 py-6 shadow-xl">
                     <div className="px-4 sm:px-6">
                       <div className="flex items-start justify-between">
                         <Dialog.Title className="text-base font-semibold leading-6 text-white">
@@ -87,7 +87,7 @@ export default function EndpointAddSideComponent({
                         <div className="ml-3 flex h-7 items-center">
                           <button
                             type="button"
-                            className="relative rounded-md bg-white text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                            className="relative rounded-md bg-white text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2"
                             onClick={() => setOpen(false)}
                           >
                             <span className="absolute -inset-2.5" />
@@ -111,7 +111,8 @@ export default function EndpointAddSideComponent({
                           <input
                             type="text"
                             name="nickname"
-                            className="p-2 bg-transparent border-b border-b-blue-600 caret-blue-600"
+                            required={true}
+                            className="p-2 bg-transparent border-b border-b-gray-600 caret-gray-600"
                             placeholder="my-server"
                           />
                         </div>
@@ -120,21 +121,27 @@ export default function EndpointAddSideComponent({
                           <input
                             type="text"
                             name="hostname"
-                            className="p-2 bg-transparent border-b border-b-blue-600 caret-blue-600"
+                            required={true}
+                            className="p-2 bg-transparent border-b border-b-gray-600 caret-gray-600"
                             placeholder="local.domain.com"
                           />
                         </div>
                         <div className="flex flex-col gap-1">
                           <label className="text-sm">Port</label>
                           <input
-                            type="text"
+                            type="number"
                             name="port"
-                            className="p-2 bg-transparent border-b border-b-blue-600 caret-blue-600"
+                            min={1}
+                            max={65535}
+                            className="p-2 bg-transparent border-b border-b-gray-600 caret-gray-600"
                             placeholder="3000"
                           />
                         </div>
                         <div className="">
-                          <button className="px-4 py-2 text-white bg-blue-700 rounded-md">
+                          <button
+                            type="button"
+                            className="block rounded-md bg-indigo-500 px-3 py-2 text-center text-sm font-semibold text-white hover:bg-indigo-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500"
+                          >
                             Add
                           </button>
                         </div>

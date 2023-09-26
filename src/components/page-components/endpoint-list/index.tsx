@@ -9,6 +9,7 @@ import { Command, open as shellOpen } from "@tauri-apps/api/shell";
 import { useCallback, useEffect, useState } from "react";
 import EndpointAddSideComponent, { EndpointData } from "./add";
 import DockerLogModal from "./docker-log";
+import EndpointListTable from "./table";
 
 export default function EndpointListComponent() {
   const [loaded, setLoaded] = useState(false);
@@ -125,25 +126,26 @@ export default function EndpointListComponent() {
 
   return (
     <div className="flex flex-col min-h-screen py-2 text-gray-100 bg-gray-900">
-      <DockerLogModal stream={dockerProcessStream} isOpen={dockerModalOpen} />
-      <EndpointAddSideComponent
-        open={openSide}
-        setOpen={setOpenSide}
-        onAdd={(data) => {
-          addEndpoint(data);
-        }}
-      />
-      <div className="flex gap-2 p-4">
-        <div
-          className="p-2 bg-white text-gray-700 rounded-md cursor-pointer hover:bg-gray-100 text-sm"
-          onClick={() => {
-            if (endpointList.length === 0) return;
-            startDocker();
+      <div className="bg-gray-700 shadow-md">
+        <DockerLogModal stream={dockerProcessStream} isOpen={dockerModalOpen} />
+        <EndpointAddSideComponent
+          open={openSide}
+          setOpen={setOpenSide}
+          onAdd={(data) => {
+            addEndpoint(data);
           }}
-        >
-          Start Docker
-        </div>
-        {/* <div
+        />
+        <div className="flex gap-2 px-4 py-4">
+          <div
+            className="p-2 bg-white text-gray-700 rounded-md cursor-pointer shadow-md hover:bg-gray-200 hover:text-gray-950 text-sm"
+            onClick={() => {
+              if (endpointList.length === 0) return;
+              startDocker();
+            }}
+          >
+            Start Docker
+          </div>
+          {/* <div
           className="p-2 underline cursor-pointer text-sm"
           onClick={() => {
             openAppData();
@@ -151,66 +153,25 @@ export default function EndpointListComponent() {
         >
           Open docker-compose folder
         </div> */}
-      </div>
-      <div className="p-4">
-        <h1 className="text-2xl">Endopoint List</h1>
+          <a
+            className="p-2 underline cursor-pointer text-sm"
+            href={`https://heavenly-tent-fff.notion.site/Ophiuchi-Developers-Toolkit-734dc4f766fe40aebfe0da3cbbc304f5?pvs=4`}
+            target="_blank"
+          >
+            Help
+          </a>
+        </div>
       </div>
 
       <div className="p-4">
-        <table className="table-auto border-separate border border-gray-500 w-full">
-          <thead>
-            <tr>
-              <th className="border border-gray-600">Nickname</th>
-              <th className="border border-gray-600">Hostname</th>
-              <th className="border border-gray-600">Port</th>
-              <th className="border border-gray-600">Actions</th>
-              <th className="border border-gray-600">Manage</th>
-            </tr>
-          </thead>
-          <tbody>
-            {endpointList.map((endpoint: any, index) => {
-              return (
-                <tr key={index} className="text-center">
-                  <td className="border border-gray-800">
-                    {endpoint.nickname}
-                  </td>
-                  <td className="border border-gray-800">
-                    {endpoint.hostname}
-                  </td>
-                  <td className="border border-gray-800">{endpoint.port}</td>
-                  <td
-                    className="border border-gray-800 cursor-pointer underline"
-                    onClick={() => {
-                      onAddCertToKeychain(endpoint);
-                    }}
-                  >
-                    Add Cert to keychain
-                  </td>
-                  <td
-                    className="border border-gray-800 cursor-pointer underline"
-                    onClick={() => {
-                      onDeleteEndpoint(endpoint);
-                    }}
-                  >
-                    Delete
-                  </td>
-                </tr>
-              );
-            })}
-          </tbody>
-        </table>
-        {shouldShowAddButton && (
-          <div className="py-4">
-            <button
-              className="px-4 py-2 text-white bg-blue-500 rounded hover:bg-blue-600 text-sm"
-              onClick={() => {
-                setOpenSide(true);
-              }}
-            >
-              Add Endpoint
-            </button>
-          </div>
-        )}
+        <EndpointListTable
+          list={endpointList}
+          onAddCertToKeychain={onAddCertToKeychain}
+          onDeleteEndpoint={onDeleteEndpoint}
+          onAddEndpoint={() => {
+            setOpenSide(true);
+          }}
+        />
       </div>
     </div>
   );
