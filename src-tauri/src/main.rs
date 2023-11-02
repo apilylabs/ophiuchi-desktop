@@ -164,7 +164,20 @@ fn remove_cert_from_keychain(name: String) {
 }
 
 fn main() {
-  let _ = fix_path_env::fix();
+    let _ = fix_path_env::fix();
+
+    let client = sentry_tauri::sentry::init((
+    "https://4dba3631eee3b1e7aeec29ba11fdfb84@o4504409717800960.ingest.sentry.io/4506153853255680",
+    sentry_tauri::sentry::ClientOptions {
+        release: sentry_tauri::sentry::release_name!(),
+        ..Default::default()
+    },
+));
+
+// Everything before here runs in both app and crash reporter processes
+let _guard = sentry_tauri::minidump::init(&client);
+// Everything after here runs in only the app process
+
   tauri::Builder::default()
     .invoke_handler(tauri::generate_handler![
         add_cert_to_keychain, 
