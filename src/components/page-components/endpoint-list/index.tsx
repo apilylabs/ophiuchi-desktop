@@ -209,6 +209,7 @@ export default function EndpointListComponent() {
           }}
         />
         <RequestPasswordModal
+          description={"Ophiuchi wants to edit: /etc/hosts"}
           isOpen={passwordModalShown}
           onConfirm={function (password: string): void {
             setPasswordModalOpen(false);

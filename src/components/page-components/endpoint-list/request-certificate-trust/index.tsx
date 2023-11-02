@@ -3,10 +3,12 @@ import { ExclamationTriangleIcon } from "@heroicons/react/24/outline";
 import { Fragment, useEffect, useRef, useState } from "react";
 
 export default function RequestPasswordModal({
+  description,
   isOpen,
   onConfirm,
   onClose,
 }: {
+  description: string;
   isOpen: boolean;
   onConfirm: (password: string) => void;
   onClose?: () => void;
@@ -70,9 +72,14 @@ export default function RequestPasswordModal({
                       Password Required
                     </Dialog.Title>
                     <div className="mt-2">
-                      <p className="text-sm text-gray-500">
-                        This action requires your password. Please enter your
-                        password to continue. Password is never saved.
+                      <p className="text-sm text-gray-500 leading-relaxed">
+                        <span className="font-bold">{description}</span>
+                        <br />
+                        Please enter your computer password to continue.
+                        <br />
+                        <span className="text-red-500">
+                          Note: Password is never saved.
+                        </span>
                       </p>
                     </div>
                     <div className="mt-2">
