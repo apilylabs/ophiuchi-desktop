@@ -107,7 +107,7 @@ export default function EndpointAddSideComponent({
                         }}
                       >
                         <div className="flex flex-col gap-1">
-                          <label className="text-sm">Name</label>
+                          <label className="text-sm">Nickname</label>
                           <input
                             type="text"
                             name="nickname"
@@ -115,6 +115,11 @@ export default function EndpointAddSideComponent({
                             className="p-2 bg-transparent border-b border-b-gray-600 caret-gray-600"
                             placeholder="my-server"
                           />
+                          <div className="">
+                            <span className="text-xs text-gray-400">
+                              Nickname you can identify.
+                            </span>
+                          </div>
                         </div>
                         <div className="flex flex-col gap-1">
                           <label className="text-sm">Hostname</label>
@@ -125,6 +130,11 @@ export default function EndpointAddSideComponent({
                             className="p-2 bg-transparent border-b border-b-gray-600 caret-gray-600"
                             placeholder="local.domain.com"
                           />
+                          <div className="">
+                            <span className="text-xs text-gray-400">
+                              The hosname that will be created.
+                            </span>
+                          </div>
                         </div>
                         <div className="flex flex-col gap-1">
                           <label className="text-sm">Port</label>
@@ -137,6 +147,9 @@ export default function EndpointAddSideComponent({
                             className="p-2 bg-transparent border-b border-b-gray-600 caret-gray-600"
                             placeholder="3000"
                           />
+                          <span className="text-xs text-gray-400">
+                            The port number of your application to be proxied.
+                          </span>
                         </div>
                         <div className="">
                           <button
