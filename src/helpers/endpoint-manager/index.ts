@@ -30,7 +30,7 @@ export class EndpointManager implements IFileManagerBase {
     const dir = this.getBaseDir();
     const dirExist = await exists(CONFIG_DIR, { dir });
     if (!dirExist) {
-      await createDir(CONFIG_DIR, { dir });
+      await createDir(CONFIG_DIR, { dir, recursive: true });
     }
     // create file if not exist
     const fileExist = await exists(`${CONFIG_DIR}/${FILE_NAME}`, { dir });
