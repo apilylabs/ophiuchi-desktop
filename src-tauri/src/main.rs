@@ -179,6 +179,7 @@ let _guard = sentry_tauri::minidump::init(&client);
 // Everything after here runs in only the app process
 
   tauri::Builder::default()
+    .plugin(sentry_tauri::plugin())
     .invoke_handler(tauri::generate_handler![
         add_cert_to_keychain, 
         remove_cert_from_keychain,
