@@ -10,6 +10,8 @@ import {
 import { resolveResource } from "@tauri-apps/api/path";
 import * as selfsigned from "selfsigned";
 
+let instance: CertificateManager | null = null;
+
 export class CertificateManager {
   async deleteCertificateFiles(hostname: string) {
     await removeDir(`cert/${hostname}`, {
@@ -74,6 +76,13 @@ export class CertificateManager {
   }
   constructor() {
     // init
+  }
+
+  public static shared(): CertificateManager {
+    if (instance === null) {
+      instance = new CertificateManager();
+    }
+    return instance;
   }
 
   public async generateCertificate(hostname: string) {

@@ -105,8 +105,8 @@
         "resizable": true,
         "title": "Ophiuchi",
         "width": 1200,
-        "minWidth": 480,
-        "minHeight": 640
+        "minWidth": 1024,
+        "minHeight": 768
       }
     ]
   }
