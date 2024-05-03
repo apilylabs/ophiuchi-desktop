@@ -50,7 +50,7 @@ export default function EndpointListTable({
                     scope="col"
                     className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-white sm:pl-0"
                   >
-                    Name
+                    Nickname
                   </th>
                   <th
                     scope="col"
@@ -62,7 +62,7 @@ export default function EndpointListTable({
                     scope="col"
                     className="px-3 py-3.5 text-left text-sm font-semibold text-white"
                   >
-                    Port
+                    Application Port
                   </th>
                   {/* <th
                     scope="col"
@@ -70,9 +70,9 @@ export default function EndpointListTable({
                   >
                     Actions
                   </th> */}
-                  <th scope="col" className="relative py-3.5 pl-3 pr-4 sm:pr-0">
-                    <span className="sr-only">Edit</span>
-                  </th>
+                  {/* <th scope="col" className="relative py-3.5 pl-3 pr-4 sm:pr-0">
+                    <span className="sr-only">Delete</span>
+                  </th> */}
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-800">
