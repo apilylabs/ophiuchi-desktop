@@ -8,7 +8,8 @@ import { BaseDirectory, readTextFile, writeTextFile } from "@tauri-apps/api/fs";
 import { appDataDir, resolveResource } from "@tauri-apps/api/path";
 import { Command, open as shellOpen } from "@tauri-apps/api/shell";
 import { useCallback, useEffect, useState } from "react";
-import CreateProxySideComponent, { EndpointData } from "./add";
+import { EndpointData } from "./add";
+import CreateProxyV2SideComponent from "./add-new";
 import DockerLogModal from "./docker-log";
 import RequestPasswordModal from "./request-certificate-trust";
 import EndpointListTable from "./table";
@@ -211,7 +212,7 @@ export default function EndpointListComponent() {
             setDockerModalOpen(false);
           }}
         />
-        <CreateProxySideComponent
+        <CreateProxyV2SideComponent
           open={openSide}
           setOpen={setOpenSide}
           onAdd={(data) => {
