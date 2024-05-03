@@ -27,6 +27,12 @@ export default function CreateProxyV2SideComponent({
 }) {
   const formRef = useRef<HTMLFormElement>(null);
   const [isGenerating, setIsGenerating] = useState(false);
+  const [hostnameState, setHostnameState] = useState<string>("");
+  const [portState, setPortState] = useState<string>("");
+
+  const fixHostname = (hostname: string) => {
+    return hostname.replace(/[^a-z0-9\-\.]/g, "");
+  };
 
   const onAddButton = useCallback(async () => {
     if (!formRef.current) return;
@@ -128,6 +134,10 @@ export default function CreateProxyV2SideComponent({
                               required={true}
                               className="p-2 bg-transparent border border-gray-600 caret-gray-600 rounded-md text-gray-100 text-5xl"
                               placeholder="3000"
+                              value={portState}
+                              onChange={(e) => {
+                                setPortState(e.target.value);
+                              }}
                             />
                           </div>
 
@@ -145,6 +155,10 @@ export default function CreateProxyV2SideComponent({
                               className="p-2 bg-transparent border border-gray-600 caret-gray-600 rounded-md text-gray-100 text-5xl"
                               placeholder="my.example.local"
                               size={24}
+                              value={hostnameState}
+                              onChange={(e) =>
+                                setHostnameState(fixHostname(e.target.value))
+                              }
                             />
                           </div>
                         </div>
