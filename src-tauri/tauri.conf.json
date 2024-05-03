@@ -101,10 +101,10 @@
     "windows": [
       {
         "fullscreen": false,
-        "height": 600,
+        "height": 1000,
         "resizable": true,
         "title": "Ophiuchi",
-        "width": 800,
+        "width": 1200,
         "minWidth": 480,
         "minHeight": 640
       }

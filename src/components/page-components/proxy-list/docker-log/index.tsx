@@ -4,9 +4,11 @@ import { Fragment, useEffect, useState } from "react";
 export default function DockerLogModal({
   stream,
   isOpen,
+  onClosed,
 }: {
-  stream: string;
+  stream: any;
   isOpen: boolean;
+  onClosed?: () => void;
 }) {
   const [_isOpen, setIsOpen] = useState(true);
 
@@ -16,6 +18,7 @@ export default function DockerLogModal({
 
   function closeModal() {
     setIsOpen(false);
+    onClosed && onClosed();
   }
 
   function openModal() {

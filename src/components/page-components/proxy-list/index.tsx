@@ -8,7 +8,7 @@ import { BaseDirectory, readTextFile, writeTextFile } from "@tauri-apps/api/fs";
 import { appDataDir, resolveResource } from "@tauri-apps/api/path";
 import { Command, open as shellOpen } from "@tauri-apps/api/shell";
 import { useCallback, useEffect, useState } from "react";
-import EndpointAddSideComponent, { EndpointData } from "./add";
+import CreateProxySideComponent, { EndpointData } from "./add";
 import DockerLogModal from "./docker-log";
 import RequestPasswordModal from "./request-certificate-trust";
 import EndpointListTable from "./table";
@@ -18,10 +18,18 @@ export default function EndpointListComponent() {
   const [endpointList, setEndpointList] = useState([]);
   const [openSide, setOpenSide] = useState(false);
   const [dockerModalOpen, setDockerModalOpen] = useState(false);
-  const [dockerProcessStream, setDockerProcessStream] = useState("");
+  const [dockerProcessStream, setDockerProcessStream] = useState<any>("");
   const [passwordModalShown, setPasswordModalOpen] = useState(false);
   const [currentEndpoint, setCurrentEndpoint] = useState<EndpointData>();
   const [currentMode, setCurrentMode] = useState<"add" | "delete">("add");
+
+  const appendDockerProcessStream = useCallback((line: any) => {
+    if (typeof line === "string") {
+      setDockerProcessStream((prev: any) => prev + `\n${line}`);
+    } else {
+      setDockerProcessStream((prev: any) => prev + line);
+    }
+  }, []);
 
   const stopDocker = async () => {
     const appDataDirPath = await appDataDir();
@@ -32,34 +40,35 @@ export default function EndpointListComponent() {
       "down",
     ]);
     command.on("close", (data) => {
-      setDockerProcessStream(
-        (prev) =>
-          prev +
-          `\ncommand finished with code ${data.code} and signal ${data.signal}`
-      );
+      if (data.code == 0) {
+        appendDockerProcessStream(`✅ Stopping Docker successfully finished.`);
+      } else {
+        appendDockerProcessStream(
+          `🚨 Stopping Docker failed with code ${data.code} and signal ${data.signal}`
+        );
+      }
+      appendDockerProcessStream("💤 Waiting for docker to settle...");
     });
     command.on("error", (error) => console.error(`command error: "${error}"`));
-    command.stdout.on("data", (line) =>
-      setDockerProcessStream((prev) => prev + `\n${line}`)
-    );
-    command.stderr.on("data", (line) =>
-      setDockerProcessStream((prev) => prev + `\n:${line}`)
-    );
+    command.stdout.on("data", (line) => appendDockerProcessStream(`${line}`));
+    command.stderr.on("data", (line) => appendDockerProcessStream(`${line}`));
     const child = await command.spawn();
-    await new Promise((resolve) => setTimeout(resolve, 1000));
-    setDockerModalOpen(true);
+    setDockerProcessStream(`👉 Stopping Docker...`);
   };
   const startDocker = async () => {
-    // read file from bundle
-    setDockerModalOpen(false);
+    setDockerModalOpen(true);
+
     await stopDocker();
+
+    await new Promise((resolve) => setTimeout(resolve, 2500));
+
     const resourcePath = await resolveResource(
       "bundle/templates/docker-compose.yml.template"
     );
     console.log(`resourcePath: ${resourcePath}`);
     const dockerComposeTemplate = await readTextFile(resourcePath);
 
-    setDockerProcessStream(dockerComposeTemplate);
+    appendDockerProcessStream(`👉 Starting Docker...`);
     await writeTextFile(`docker-compose.yml`, dockerComposeTemplate, {
       dir: BaseDirectory.AppData,
     });
@@ -75,23 +84,19 @@ export default function EndpointListComponent() {
       "-d",
     ]);
     command.on("close", (data) => {
-      setDockerProcessStream(
-        (prev) =>
-          prev +
-          `\ncommand finished with code ${data.code} and signal ${data.signal}`
-      );
+      if (data.code == 0) {
+        appendDockerProcessStream(`✅ Starting Docker successfully finished.`);
+      } else {
+        appendDockerProcessStream(
+          `🚨 Starting Docker failed with code ${data.code} and signal ${data.signal}`
+        );
+      }
     });
     command.on("error", (error) => console.error(`command error: "${error}"`));
-    command.stdout.on("data", (line) =>
-      setDockerProcessStream((prev) => prev + `\n${line}`)
-    );
-    command.stderr.on("data", (line) =>
-      setDockerProcessStream((prev) => prev + `\n:${line}`)
-    );
+    command.stdout.on("data", (line) => appendDockerProcessStream(`${line}`));
+    command.stderr.on("data", (line) => appendDockerProcessStream(`${line}`));
     const child = await command.spawn();
-    setDockerProcessStream(`command : ${command}`);
-    setDockerProcessStream(`command spawned with pid ${child.pid}`);
-    setDockerModalOpen(true);
+    appendDockerProcessStream(`command spawned with pid ${child.pid}`);
   };
 
   const onAddCertToKeychain = useCallback(async (endpoint: EndpointData) => {
@@ -198,9 +203,15 @@ export default function EndpointListComponent() {
 
   return (
     <div className="flex flex-col min-h-screen text-gray-100 bg-gray-900">
-      <div className="bg-gray-700 shadow-md">
-        <DockerLogModal stream={dockerProcessStream} isOpen={dockerModalOpen} />
-        <EndpointAddSideComponent
+      <div className="">
+        <DockerLogModal
+          stream={dockerProcessStream}
+          isOpen={dockerModalOpen}
+          onClosed={() => {
+            setDockerModalOpen(false);
+          }}
+        />
+        <CreateProxySideComponent
           open={openSide}
           setOpen={setOpenSide}
           onAdd={(data) => {
@@ -223,11 +234,13 @@ export default function EndpointListComponent() {
             }
           }}
         />
-        <div className="flex gap-2 px-4 py-4">
+        <div className="flex gap-2 px-4 py-4 fixed top-0 left-0 right-0 bg-gray-700">
           <div
             className="p-2 bg-white text-gray-700 rounded-md cursor-pointer shadow-md hover:bg-gray-200 hover:text-gray-950 text-sm"
             onClick={() => {
-              if (endpointList.length === 0) return;
+              if (endpointList.length === 0) {
+                return;
+              }
               startDocker();
             }}
           >
@@ -251,7 +264,7 @@ export default function EndpointListComponent() {
         </div>
       </div>
 
-      <div className="p-4">
+      <div className="p-4 mt-20">
         <EndpointListTable
           list={endpointList}
           onAddCertToKeychain={onAddCertToKeychain}
