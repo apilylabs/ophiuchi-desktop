@@ -8,6 +8,7 @@ import { Roboto_Mono } from "next/font/google";
 import { Fragment, useCallback, useRef, useState } from "react";
 
 const roboto = Roboto_Mono({ subsets: ["latin"] });
+const certMgr = CertificateManager.shared();
 
 export type EndpointData = {
   nickname: string;
@@ -31,14 +32,15 @@ export default function CreateProxyV2SideComponent({
     if (!formRef.current) return;
     const formData = new FormData(formRef.current);
     setIsGenerating(true);
+    const nicknameGenerated = `Proxy for ${formData.get("hostname")}`;
     const data: EndpointData = {
-      nickname: formData.get("nickname") as string,
+      nickname: nicknameGenerated,
       hostname: formData.get("hostname") as string,
       port: parseInt(formData.get("port") as string),
     };
     //
     // gen cert
-    const certMgr = new CertificateManager();
+
     const pems = await certMgr.generateCertificate(data.hostname);
     const conf = await certMgr.generateNginxConfigurationFiles(
       data.hostname,
