@@ -8,7 +8,7 @@ import { BaseDirectory, readTextFile, writeTextFile } from "@tauri-apps/api/fs";
 import { appDataDir, resolveResource } from "@tauri-apps/api/path";
 import { Command, open as shellOpen } from "@tauri-apps/api/shell";
 import { useCallback, useEffect, useState } from "react";
-import EndpointAddSideComponent, { EndpointData } from "./add";
+import CreateProxySideComponent, { EndpointData } from "./add";
 import DockerLogModal from "./docker-log";
 import RequestPasswordModal from "./request-certificate-trust";
 import EndpointListTable from "./table";
@@ -46,7 +46,7 @@ export default function EndpointListComponent() {
       setDockerProcessStream((prev) => prev + `\n:${line}`)
     );
     const child = await command.spawn();
-    await new Promise((resolve) => setTimeout(resolve, 1000));
+    await new Promise((resolve) => setTimeout(resolve, 5000));
     setDockerModalOpen(true);
   };
   const startDocker = async () => {
@@ -198,9 +198,9 @@ export default function EndpointListComponent() {
 
   return (
     <div className="flex flex-col min-h-screen text-gray-100 bg-gray-900">
-      <div className="bg-gray-700 shadow-md">
+      <div className="">
         <DockerLogModal stream={dockerProcessStream} isOpen={dockerModalOpen} />
-        <EndpointAddSideComponent
+        <CreateProxySideComponent
           open={openSide}
           setOpen={setOpenSide}
           onAdd={(data) => {
@@ -223,11 +223,13 @@ export default function EndpointListComponent() {
             }
           }}
         />
-        <div className="flex gap-2 px-4 py-4">
+        <div className="flex gap-2 px-4 py-4 fixed top-0 left-0 right-0 bg-gray-700">
           <div
             className="p-2 bg-white text-gray-700 rounded-md cursor-pointer shadow-md hover:bg-gray-200 hover:text-gray-950 text-sm"
             onClick={() => {
-              if (endpointList.length === 0) return;
+              if (endpointList.length === 0) {
+                return;
+              }
               startDocker();
             }}
           >
@@ -251,7 +253,7 @@ export default function EndpointListComponent() {
         </div>
       </div>
 
-      <div className="p-4">
+      <div className="p-4 mt-20">
         <EndpointListTable
           list={endpointList}
           onAddCertToKeychain={onAddCertToKeychain}

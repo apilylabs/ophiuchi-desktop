@@ -11,7 +11,7 @@ export type EndpointData = {
   port: number;
 };
 
-export default function EndpointAddSideComponent({
+export default function CreateProxySideComponent({
   open,
   setOpen,
   onAdd: onAddFinish,
@@ -60,7 +60,7 @@ export default function EndpointAddSideComponent({
             <div className="w-full h-full flex flex-col gap-8 justify-center items-center">
               <div className="w-8 h-8 animate-ping rounded-full bg-green-500"></div>
               <div className="text-xs">
-                Generating SSL certificate may take a while...
+                Generating SSL certificate. It may take a while...
               </div>
             </div>
           </div>
@@ -82,7 +82,7 @@ export default function EndpointAddSideComponent({
                     <div className="px-4 sm:px-6">
                       <div className="flex items-start justify-between">
                         <Dialog.Title className="text-base font-semibold leading-6 text-white">
-                          Add Endpoint
+                          Create Proxy
                         </Dialog.Title>
                         <div className="ml-3 flex h-7 items-center">
                           <button
@@ -107,37 +107,40 @@ export default function EndpointAddSideComponent({
                         }}
                       >
                         <div className="flex flex-col gap-1">
-                          <label className="text-sm">Nickname</label>
+                          <label className="text-sm">
+                            Nickname for reference
+                          </label>
                           <input
                             type="text"
                             name="nickname"
                             required={true}
                             className="p-2 bg-transparent border-b border-b-gray-600 caret-gray-600"
-                            placeholder="my-server"
+                            placeholder="ex) my-server"
                           />
                           <div className="">
                             <span className="text-xs text-gray-400">
-                              Nickname you can identify.
+                              A nickname for your proxy.
                             </span>
                           </div>
                         </div>
                         <div className="flex flex-col gap-1">
-                          <label className="text-sm">Hostname</label>
+                          <label className="text-sm">Hostname to use</label>
                           <input
                             type="text"
                             name="hostname"
                             required={true}
                             className="p-2 bg-transparent border-b border-b-gray-600 caret-gray-600"
-                            placeholder="local.domain.com"
+                            placeholder="ex) my.local.host.com"
                           />
                           <div className="">
                             <span className="text-xs text-gray-400">
-                              The hosname that will be created.
+                              The hostname that you want to create. (e.g.
+                              my.localhost.com)
                             </span>
                           </div>
                         </div>
                         <div className="flex flex-col gap-1">
-                          <label className="text-sm">Port</label>
+                          <label className="text-sm">Port to proxy</label>
                           <input
                             type="number"
                             name="port"
@@ -148,7 +151,7 @@ export default function EndpointAddSideComponent({
                             placeholder="3000"
                           />
                           <span className="text-xs text-gray-400">
-                            The port number of your application to be proxied.
+                            The port number of your current application.
                           </span>
                         </div>
                         <div className="">

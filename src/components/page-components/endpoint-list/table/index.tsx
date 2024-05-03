@@ -24,10 +24,10 @@ export default function EndpointListTable({
       <div className="sm:flex sm:items-center">
         <div className="sm:flex-auto">
           <h1 className="text-base font-semibold leading-6 text-white">
-            Endpoints
+            Created Proxies
           </h1>
           <p className="mt-2 text-sm text-gray-300">
-            List of endpoints that are currently registered.
+            List of proxies that are currently registered.
           </p>
         </div>
         <div className="mt-4 sm:ml-16 sm:mt-0 sm:flex-none">
@@ -36,7 +36,7 @@ export default function EndpointListTable({
             onClick={() => onAddEndpoint()}
             className="block rounded-md bg-indigo-500 px-3 py-2 text-center text-sm font-semibold text-white hover:bg-indigo-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500"
           >
-            Add
+            Create Proxy
           </button>
         </div>
       </div>
