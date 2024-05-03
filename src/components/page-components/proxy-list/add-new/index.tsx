@@ -3,7 +3,7 @@
 
 import { CertificateManager } from "@/helpers/certificate-manager";
 import { Dialog, Transition } from "@headlessui/react";
-import { XMarkIcon } from "@heroicons/react/24/outline";
+import { ArrowRightIcon, XMarkIcon } from "@heroicons/react/24/outline";
 import { Roboto_Mono } from "next/font/google";
 import { Fragment, useCallback, useRef, useState } from "react";
 
@@ -85,7 +85,7 @@ export default function CreateProxyV2SideComponent({
                   <div className="flex h-full flex-col overflow-y-scroll bg-gray-950 py-6 shadow-xl">
                     <div className="px-4 sm:px-6">
                       <div className="flex items-start justify-between">
-                        <Dialog.Title className="text-base font-semibold leading-6 text-white">
+                        <Dialog.Title className="text-lg font-semibold leading-6 text-white">
                           Let's create a new proxy!
                         </Dialog.Title>
                         <div className="ml-3 flex h-7 items-center">
@@ -141,7 +141,7 @@ export default function CreateProxyV2SideComponent({
                               name="hostname"
                               required={true}
                               className="p-2 bg-transparent border border-gray-600 caret-gray-600 rounded-md text-gray-100 text-5xl"
-                              placeholder="my.local.host.com"
+                              placeholder="my.example.local"
                               size={24}
                             />
                           </div>
@@ -149,9 +149,11 @@ export default function CreateProxyV2SideComponent({
                         <div className="flex justify-center">
                           <button
                             type="submit"
-                            className="block rounded-md bg-indigo-500 px-6 py-3 text-center font-semibold text-white hover:bg-indigo-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500 text-lg"
+                            className="block rounded-md bg-white px-6 py-2 text-center font-semibold text-gray-800 hover:bg-gray-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500 text-lg"
                           >
-                            Next
+                            <div className="flex gap-2 items-center">
+                              Next <ArrowRightIcon className="h-4 w-4" />
+                            </div>
                           </button>
                         </div>
                       </form>
