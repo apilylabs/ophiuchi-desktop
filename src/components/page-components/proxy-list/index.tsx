@@ -139,6 +139,8 @@ export default function EndpointListComponent() {
 
   const onDeleteEndpoint = useCallback(
     async (endpoint: EndpointData) => {
+      setCurrentMode("delete");
+      setCurrentEndpoint(endpoint);
       const confirmed = await confirm(
         `Are you sure to delete ${endpoint.nickname}?`
       );
@@ -162,7 +164,6 @@ export default function EndpointListComponent() {
 
       endpointManager.save(copiedList);
       setEndpointList(copiedList);
-      setCurrentMode("delete");
       setPasswordModalOpen(true);
     },
     [endpointList]
@@ -175,25 +176,18 @@ export default function EndpointListComponent() {
     setLoaded(true);
   }, []);
 
-  const addEndpoint = useCallback(
-    async (data: EndpointData) => {
-      setCurrentMode("add");
-      const mgr = EndpointManager.sharedManager();
-      const endpointList = await mgr.get();
-      if (
-        endpointList.find((e: EndpointData) => e.hostname === data.hostname)
-      ) {
-        // already exists
-        return;
-      }
-      endpointList.push(data);
-      mgr.save(endpointList);
-      setEndpointList(endpointList);
-      onAddCertToKeychain(data);
-      setPasswordModalOpen(true);
-    },
-    [onAddCertToKeychain]
-  );
+  const addEndpoint = useCallback(async (data: EndpointData) => {
+    setCurrentMode("add");
+    const mgr = EndpointManager.sharedManager();
+    const endpointList = await mgr.get();
+    if (endpointList.find((e: EndpointData) => e.hostname === data.hostname)) {
+      // already exists
+      return;
+    }
+    endpointList.push(data);
+    mgr.save(endpointList);
+    setEndpointList(endpointList);
+  }, []);
 
   useEffect(() => {
     prepareConfigPage();
