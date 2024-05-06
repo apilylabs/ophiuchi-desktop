@@ -10,12 +10,10 @@ const people = [
 
 export default function EndpointListTable({
   list,
-  onAddCertToKeychain,
   onDeleteEndpoint,
   onAddEndpoint,
 }: {
   list: any[];
-  onAddCertToKeychain: (endpoint: any) => void;
   onDeleteEndpoint: (endpoint: any) => void;
   onAddEndpoint: () => void;
 }) {
