@@ -227,7 +227,7 @@ export default function EndpointListComponent() {
               startDocker();
             }}
           >
-            Start Docker
+            {dockerNeedsRestart ? "Restart Docker To Apply" : "Start Docker "}
           </div>
           <div
             className="p-2 underline cursor-pointer text-sm"
