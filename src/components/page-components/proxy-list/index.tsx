@@ -22,6 +22,7 @@ export default function EndpointListComponent() {
   const [dockerProcessStream, setDockerProcessStream] = useState<any>("");
   const [passwordModalShown, setPasswordModalOpen] = useState(false);
   const [currentEndpoint, setCurrentEndpoint] = useState<EndpointData>();
+  const [dockerNeedsRestart, setDockerNeedsRestart] = useState(false);
 
   const appendDockerProcessStream = useCallback((line: any) => {
     if (typeof line === "string") {
@@ -57,6 +58,7 @@ export default function EndpointListComponent() {
   };
   const startDocker = async () => {
     setDockerModalOpen(true);
+    setDockerNeedsRestart(false);
 
     await stopDocker();
 
@@ -156,6 +158,7 @@ export default function EndpointListComponent() {
     }
     endpointList.push(data);
     mgr.save(endpointList);
+    setDockerNeedsRestart(true);
     setEndpointList(endpointList);
   }, []);
 
@@ -212,7 +215,11 @@ export default function EndpointListComponent() {
         />
         <div className="flex gap-2 px-4 py-4 fixed top-0 left-0 right-0 bg-gray-700">
           <div
-            className="p-2 bg-white text-gray-700 rounded-md cursor-pointer shadow-md hover:bg-gray-200 hover:text-gray-950 text-sm"
+            className={`p-2 ${
+              dockerNeedsRestart ? "bg-yellow-400" : "bg-white"
+            } text-gray-700 rounded-md cursor-pointer shadow-md ${
+              dockerNeedsRestart ? "hover:bg-yellow-300" : "hover:bg-gray-200"
+            } hover:text-gray-950 text-sm`}
             onClick={() => {
               if (endpointList.length === 0) {
                 return;
