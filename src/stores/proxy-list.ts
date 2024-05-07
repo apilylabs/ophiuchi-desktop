@@ -1,3 +1,4 @@
+import { EndpointManager } from "@/helpers/endpoint-manager";
 import { create } from "zustand";
 
 export type EndpointData = {
@@ -9,11 +10,23 @@ export type EndpointData = {
 interface ProxyListStore {
   proxyList: EndpointData[];
   setProxyList: (proxyList: EndpointData[]) => void;
+  addProxyItem: (data: EndpointData) => void;
 }
 
-const proxyListStore = create<ProxyListStore>((set) => ({
+const proxyListStore = create<ProxyListStore>((set, get) => ({
   proxyList: [],
   setProxyList: (proxyList: EndpointData[]) => set({ proxyList }),
+  addProxyItem: async (data: EndpointData) => {
+    const mgr = EndpointManager.sharedManager();
+    const _proxyList = await mgr.get();
+    if (_proxyList.find((e: EndpointData) => e.hostname === data.hostname)) {
+      // already exists
+      return;
+    }
+    _proxyList.push(data);
+    mgr.save(_proxyList);
+    set({ proxyList: _proxyList });
+  },
 }));
 
 export default proxyListStore;

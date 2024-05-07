@@ -1,17 +1,14 @@
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { EndpointData } from "@/stores/proxy-list";
+import proxyListStore from "@/stores/proxy-list";
 import { BaseDirectory, readTextFile, writeTextFile } from "@tauri-apps/api/fs";
 import { appDataDir, resolveResource } from "@tauri-apps/api/path";
 import { Command } from "@tauri-apps/api/shell";
 import { useCallback, useState } from "react";
 import DockerLogModal from "../proxy-list/docker-log";
 
-export default function DockerControl({
-  endpointList,
-}: {
-  endpointList: EndpointData[];
-}) {
+export default function DockerControl({}: {}) {
+  const { proxyList } = proxyListStore();
   const [dockerProcessStream, setDockerProcessStream] = useState<any>("");
   const [dockerModalOpen, setDockerModalOpen] = useState(false);
   const [dockerNeedsRestart, setDockerNeedsRestart] = useState(false);
@@ -99,13 +96,13 @@ export default function DockerControl({
       <Button
         variant={"default"}
         onClick={() => {
-          if (endpointList.length === 0) {
+          if (proxyList.length === 0) {
             return;
           }
           startDocker();
         }}
         className={cn(dockerNeedsRestart ? "animate-bounce" : "")}
-        disabled={endpointList.length === 0}
+        disabled={proxyList.length === 0}
       >
         {dockerNeedsRestart ? "Restart Docker To Apply" : "Start Docker "}
       </Button>

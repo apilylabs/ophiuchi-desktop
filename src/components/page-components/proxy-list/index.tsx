@@ -21,12 +21,10 @@ import RequestPasswordModal from "./request-certificate-trust";
 import EndpointListTable from "./table";
 
 export default function EndpointListComponent() {
+  const { proxyList, setProxyList, addProxyItem } = proxyListStore();
   const [loaded, setLoaded] = useState(false);
-  // const [endpointList, setEndpointList] = useState([]);
   const [openSide, setOpenSide] = useState(false);
-
   const [passwordModalShown, setPasswordModalOpen] = useState(false);
-  const { proxyList, setProxyList } = proxyListStore();
   const [currentEndpoint, setCurrentEndpoint] = useState<EndpointData>();
 
   const onDeleteFromHosts = useCallback(
@@ -65,21 +63,6 @@ export default function EndpointListComponent() {
     setProxyList(list);
     setLoaded(true);
   }, []);
-
-  const addProxyItem = useCallback(
-    async (data: EndpointData) => {
-      const mgr = EndpointManager.sharedManager();
-      const _proxyList = await mgr.get();
-      if (_proxyList.find((e: EndpointData) => e.hostname === data.hostname)) {
-        // already exists
-        return;
-      }
-      _proxyList.push(data);
-      mgr.save(_proxyList);
-      setProxyList(_proxyList);
-    },
-    [setProxyList]
-  );
 
   useEffect(() => {
     prepareConfigPage();
@@ -128,7 +111,7 @@ export default function EndpointListComponent() {
           />
           <div className="flex justify-between w-full fixed top-0 left-0 right-0 bg-gray-700 px-6 py-4 ">
             <div className="flex gap-2 items-center">
-              <DockerControl endpointList={proxyList} />
+              <DockerControl />
               <Tooltip>
                 <TooltipTrigger asChild>
                   <div
