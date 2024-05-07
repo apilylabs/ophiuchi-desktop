@@ -21,6 +21,7 @@ import {
   XMarkIcon,
 } from "@heroicons/react/24/outline";
 import { invoke } from "@tauri-apps/api";
+import { message } from "@tauri-apps/api/dialog";
 import { appDataDir } from "@tauri-apps/api/path";
 import { Roboto_Mono } from "next/font/google";
 import { Fragment, useCallback, useEffect, useRef, useState } from "react";
@@ -93,11 +94,15 @@ export default function CreateProxyV2SideComponent({
 
     invoke("add_cert_to_keychain", {
       pem_file_path: `${pemFilePath}`,
-    });
-    // setPasswordModalOpen(true);
-    // setCurrentEndpoint(endpoint);
-    setShouldAddCertToKeychain(false);
-    setKeychainAddComplete(true);
+    })
+      .then(() => {
+        setShouldAddCertToKeychain(false);
+        setKeychainAddComplete(true);
+      })
+      .catch((e) => {
+        console.error(e);
+        message(e, { title: "Error" });
+      });
   }, [currentData]);
 
   const onAddToHosts = useCallback(
