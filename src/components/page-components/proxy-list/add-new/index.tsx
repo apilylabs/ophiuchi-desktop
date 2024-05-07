@@ -137,9 +137,7 @@ export default function CreateProxyV2SideComponent({
   return (
     <>
       <RequestPasswordModal
-        description={
-          "Ophiuchi wants to edit: /etc/hosts. If you cancel, you can edit it manually."
-        }
+        description={"Ophiuchi wants to edit: /etc/hosts."}
         isOpen={passwordModalShown}
         onConfirm={function (password: string): void {
           setPasswordModalOpen(false);
@@ -330,6 +328,12 @@ export default function CreateProxyV2SideComponent({
                                       file. This is required for the browser to
                                       resolve the hostname to localhost. A modal
                                       will be shown to ask for your password.
+                                      <br />
+                                      <span className="text-red-400">
+                                        Note: Your{" "}
+                                        <Code style="sudo">/etc/hosts</Code>{" "}
+                                        file will be backed up before editing.
+                                      </span>
                                     </PopoverContent>
                                   </Popover>
                                 </p>
