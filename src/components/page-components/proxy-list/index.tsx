@@ -138,7 +138,7 @@ export default function EndpointListComponent() {
     invoke("remove_cert_from_keychain", {
       name: `${endpoint.hostname}`,
     });
-    debugger;
+    setDockerNeedsRestart(true);
     setPasswordModalOpen(true);
   }, []);
 
