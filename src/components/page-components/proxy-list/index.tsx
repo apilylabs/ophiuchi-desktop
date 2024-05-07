@@ -101,16 +101,6 @@ export default function EndpointListComponent() {
     appendDockerProcessStream(`command spawned with pid ${child.pid}`);
   };
 
-  const onAddToHosts = useCallback(
-    async (endpoint: EndpointData, password: string) => {
-      invoke("add_line_to_hosts", {
-        hostname: endpoint.hostname,
-        password: password,
-      });
-    },
-    []
-  );
-
   const onDeleteFromHosts = useCallback(
     async (endpoint: EndpointData, password: string) => {
       invoke("delete_line_from_hosts", {
