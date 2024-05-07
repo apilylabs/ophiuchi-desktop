@@ -2,6 +2,7 @@
 
 import { SystemHelper } from "@/helpers/system";
 // When using the Tauri API npm package:
+import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { useCallback, useEffect, useState } from "react";
 import pkg from "../../../../package.json";
@@ -38,7 +39,7 @@ export function SetupComponent() {
     setCurrentJob(s);
     const systemHelper = new SystemHelper();
     await systemHelper.boot();
-    setCurrentJob("Done!");
+    setCurrentJob("Loading complete. Click Start.");
     setShowNext(true);
   }, []);
 
@@ -65,18 +66,15 @@ export function SetupComponent() {
           {currentJob}
         </div>
         <div className="mx-auto w-full flex">
-          {showNext ? (
-            <Link
-              href="/endpoint-list"
-              className="bg-white rounded-lg px-4 py-2 text-black my-4 w-full text-center"
-            >
+          <Button
+            className="w-full mt-4"
+            variant={"default"}
+            disabled={!showNext}
+          >
+            <Link href="/endpoint-list" className="">
               Start
             </Link>
-          ) : (
-            <div className="bg-white rounded-lg px-4 py-2 text-black my-4 opacity-50 w-full text-center">
-              Loading...
-            </div>
-          )}
+          </Button>
         </div>
       </div>
     </div>

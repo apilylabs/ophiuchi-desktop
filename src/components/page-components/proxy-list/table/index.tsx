@@ -1,3 +1,6 @@
+import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
+import { PlusIcon } from "@heroicons/react/24/outline";
 import { appDataDir } from "@tauri-apps/api/path";
 import { open as shellOpen } from "@tauri-apps/api/shell";
 import { useCallback } from "react";
@@ -33,20 +36,26 @@ export default function EndpointListTable({
       <div className="sm:flex sm:items-center">
         <div className="sm:flex-auto">
           <h1 className="text-base font-semibold leading-6 text-white">
-            Created Proxies
+            Your Proxies
           </h1>
           <p className="mt-2 text-sm text-gray-300">
             List of proxies that are currently registered.
           </p>
         </div>
         <div className="mt-4 sm:ml-16 sm:mt-0 sm:flex-none">
-          <button
-            type="button"
-            onClick={() => onAddEndpoint()}
-            className="block rounded-md bg-indigo-500 px-3 py-2 text-center text-sm font-semibold text-white hover:bg-indigo-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500"
+          <Button
+            variant={"default"}
+            className={cn(
+              "flex gap-2 items-center",
+              list.length === 0 ? "animate-bounce" : ""
+            )}
+            onClick={() => {
+              onAddEndpoint();
+            }}
           >
+            <PlusIcon className="w-4 h-4" />
             Create Proxy
-          </button>
+          </Button>
         </div>
       </div>
       <div className="mt-8 flow-root">

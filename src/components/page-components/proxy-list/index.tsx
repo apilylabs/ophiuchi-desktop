@@ -1,7 +1,9 @@
 "use client";
 
+import { Button } from "@/components/ui/button";
 import { CertificateManager } from "@/helpers/certificate-manager";
 import { EndpointManager } from "@/helpers/endpoint-manager";
+import { cn } from "@/lib/utils";
 import { invoke } from "@tauri-apps/api";
 import { confirm } from "@tauri-apps/api/dialog";
 import { BaseDirectory, readTextFile, writeTextFile } from "@tauri-apps/api/fs";
@@ -204,21 +206,19 @@ export default function EndpointListComponent() {
           }}
         />
         <div className="flex gap-2 px-4 py-4 fixed top-0 left-0 right-0 bg-gray-700">
-          <div
-            className={`p-2 ${
-              dockerNeedsRestart ? "bg-yellow-400" : "bg-white"
-            } text-gray-700 rounded-md cursor-pointer shadow-md ${
-              dockerNeedsRestart ? "hover:bg-yellow-300" : "hover:bg-gray-200"
-            } hover:text-gray-950 text-sm`}
+          <Button
+            variant={"default"}
             onClick={() => {
               if (endpointList.length === 0) {
                 return;
               }
               startDocker();
             }}
+            className={cn(dockerNeedsRestart ? "animate-bounce" : "")}
+            disabled={endpointList.length === 0}
           >
             {dockerNeedsRestart ? "Restart Docker To Apply" : "Start Docker "}
-          </div>
+          </Button>
           <div
             className="p-2 underline cursor-pointer text-sm"
             onClick={() => {
