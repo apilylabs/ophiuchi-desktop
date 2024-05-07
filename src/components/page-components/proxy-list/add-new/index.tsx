@@ -40,21 +40,21 @@ function MultiStateButton({
   };
 }) {
   function bgColor() {
-    if (done.current) return "bg-gray-500";
-    if (ready.current) return "bg-yellow-500";
-    if (notReady.current) return "bg-gray-300";
+    if (done.current) return "";
+    if (ready.current) return "bg-yellow-500 animate-bounce";
+    if (notReady.current) return "bg-gray-600 cursor-not-allowed";
   }
 
   function hoverBgColor() {
     if (done.current) return "hover:bg-gray-600";
     if (ready.current) return "hover:bg-yellow-600";
-    if (notReady.current) return "hover:bg-gray-400";
+    if (notReady.current) return "hover:bg-gray-600";
   }
 
   function textColor() {
-    if (done.current) return "text-white";
-    if (ready.current) return "text-gray-900";
-    if (notReady.current) return "text-gray-800";
+    if (done.current) return "text-green-400";
+    if (ready.current) return "text-yellow-900 font-medium";
+    if (notReady.current) return "text-gray-900";
   }
 
   function displayString() {
@@ -74,7 +74,7 @@ function MultiStateButton({
         }
       }}
       className={`block rounded-md ${bgColor()} px-6 py-2 text-center ${textColor()} ${hoverBgColor()} focus-visible:outline 
-      focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500`}
+      focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500 shrink-0`}
     >
       <div className="flex gap-2 items-center">{displayString()}</div>
     </button>
@@ -256,10 +256,28 @@ export default function CreateProxyV2SideComponent({
                           />
                         )}
                         {createStep >= 1 && (
-                          <div className="flex flex-col gap-8 w-full max-w-3xl mx-auto h-full justify-center">
-                            <div className="flex flex-col gap-8">
-                              <div className="flex justify-between items-center">
-                                <p>Generate SSL Certificate</p>
+                          <div className="flex flex-col gap-8 w-full max-w-4xl mx-auto h-full justify-center">
+                            <div className="flex flex-col gap-4 text-center bg-gray-700 rounded-lg p-4">
+                              <h1 className="text-xl font-semibold">
+                                http://localhost:
+                                <span className="text-yellow-500">
+                                  {currentData?.port}
+                                </span>
+                              </h1>
+                              <p>👇</p>
+                              <h1 className="text-xl font-semibold">
+                                https://
+                                <span className="text-yellow-500">
+                                  {currentData?.hostname}
+                                </span>
+                              </h1>
+                            </div>
+                            <div className="flex flex-col divide-y divide-gray-500">
+                              <h3 className="text-lg font-medium py-4">
+                                Next, click each buttons to proceed:
+                              </h3>
+                              <div className="flex justify-between items-center py-8">
+                                <p>1. Generate SSL Certificate</p>
                                 <div className="">
                                   <MultiStateButton
                                     notReady={{
@@ -275,7 +293,7 @@ export default function CreateProxyV2SideComponent({
                                     }}
                                     done={{
                                       current: sslCertGenComplete,
-                                      string: "Locate",
+                                      string: "Done!",
                                       onClick: function (): void {
                                         // do nothing
                                       },
@@ -283,10 +301,11 @@ export default function CreateProxyV2SideComponent({
                                   />
                                 </div>
                               </div>
-                              <div className="flex justify-between items-center">
+                              <div className="flex justify-between items-center py-8">
                                 <p>
-                                  Register certificate to Keychain Access &
-                                  trust certificate
+                                  2. Register certificate to Keychain Access &
+                                  trust certificate (requires sudo password or
+                                  fingerprint)
                                 </p>
                                 <div className="">
                                   <MultiStateButton
@@ -303,7 +322,7 @@ export default function CreateProxyV2SideComponent({
                                     }}
                                     done={{
                                       current: keychainAddComplete,
-                                      string: "Done",
+                                      string: "Done!",
                                       onClick: function (): void {
                                         // do nothing
                                       },
@@ -311,9 +330,9 @@ export default function CreateProxyV2SideComponent({
                                   />
                                 </div>
                               </div>
-                              <div className="flex justify-between items-center">
+                              <div className="flex justify-between items-center py-8">
                                 <p className="">
-                                  Add this line:{" "}
+                                  3. Add{" "}
                                   <code className="bg-gray-800 px-2 py-1 rounded-md">
                                     127.0.0.1 {currentData?.hostname}
                                   </code>{" "}
@@ -334,7 +353,7 @@ export default function CreateProxyV2SideComponent({
                                     }}
                                     done={{
                                       current: addToEtcHostsDone,
-                                      string: "Done",
+                                      string: "Done!",
                                       onClick: function (): void {
                                         // do nothing
                                       },
@@ -342,8 +361,8 @@ export default function CreateProxyV2SideComponent({
                                   />
                                 </div>
                               </div>
-                              <div className="flex justify-between items-center">
-                                <p>Generate Nginx Configuration</p>
+                              <div className="flex justify-between items-center py-8">
+                                <p>4. Generate Nginx Configuration</p>
                                 <MultiStateButton
                                   notReady={{
                                     current: !addToEtcHostsDone,
@@ -358,15 +377,15 @@ export default function CreateProxyV2SideComponent({
                                   }}
                                   done={{
                                     current: generateNginxConfDone,
-                                    string: "Done",
+                                    string: "Done!",
                                     onClick: function (): void {
                                       // do nothing
                                     },
                                   }}
                                 />
                               </div>
-                              <div className="flex justify-between items-center">
-                                <p>Close Wizard</p>
+                              <div className="flex justify-between items-center py-8">
+                                <p>5. Close Wizard</p>
                                 <MultiStateButton
                                   notReady={{
                                     current: !generateNginxConfDone,
@@ -384,7 +403,7 @@ export default function CreateProxyV2SideComponent({
                                   }}
                                   done={{
                                     current: false,
-                                    string: "Done",
+                                    string: "Done!",
                                     onClick: function (): void {
                                       resetAndClose();
                                     },
