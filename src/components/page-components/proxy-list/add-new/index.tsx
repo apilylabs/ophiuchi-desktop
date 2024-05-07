@@ -313,9 +313,7 @@ export default function CreateProxyV2SideComponent({
                               </div>
                               <div className="flex justify-between items-center py-8">
                                 <p className="flex gap-2 items-center">
-                                  3. Add{" "}
-                                  <Code>127.0.0.1 {currentData?.hostname}</Code>{" "}
-                                  to <Code>/etc/hosts</Code> file{" "}
+                                  3. Update <Code>/etc/hosts</Code> file{" "}
                                   <Code style="sudo">
                                     <KeyIcon className="w-4 h-4" />
                                   </Code>
@@ -357,7 +355,7 @@ export default function CreateProxyV2SideComponent({
                               </div>
                               <div className="flex justify-between items-center py-8">
                                 <p className="flex gap-2 items-center">
-                                  4. Generate Nginx Configuration
+                                  4. Generate Nginx configuration file
                                   <Popover>
                                     <PopoverTrigger>
                                       <QuestionMarkCircleIcon className="w-4 h-4" />
