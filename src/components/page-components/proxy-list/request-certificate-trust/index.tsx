@@ -1,3 +1,4 @@
+/* eslint-disable react/no-unescaped-entities */
 import { Dialog, Transition } from "@headlessui/react";
 import { ExclamationTriangleIcon } from "@heroicons/react/24/outline";
 import { Fragment, useEffect, useRef, useState } from "react";
@@ -75,7 +76,8 @@ export default function RequestPasswordModal({
                       <p className="text-sm text-gray-500 leading-relaxed">
                         <span className="font-bold">{description}</span>
                         <br />
-                        Please enter your computer password to continue.
+                        <br />
+                        Please enter your machine's password to continue.
                         <br />
                         <span className="text-red-500">
                           Note: Password is never saved.

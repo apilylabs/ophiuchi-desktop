@@ -26,6 +26,7 @@ fn add_line_to_hosts(hostname: String, password: String) {
 
 #[tauri::command(rename_all = "snake_case")]
 fn delete_line_from_hosts(hostname: String, password: String) {
+    backup_hosts_file(&password);
     let line_to_add = format!("127.0.0.1 {}", hostname);
     find_and_delete_line_hosts_with_sudo(&line_to_add, &password);
 }
@@ -73,7 +74,48 @@ fn read_hosts_file() -> io::Result<String> {
 }
 
 
+fn backup_hosts_file(password: &str) {
+    let cur_day = chrono::Local::now().format("%Y-%m-%d_%H-%M-%S").to_string();
+
+    if let Some(home_dir) = env::var_os("HOME") {
+        if let Some(home_dir_str) = home_dir.to_str() {
+            // backup dir is home/hosts.bak/{cur_day}
+            let backup_dir = format!("{}/ophiuchi.hosts.bak/", home_dir_str);
+            // mkdir if not exists (doesn't require sudo?)
+            let mkdir_command = format!("mkdir -p {}", backup_dir);
+            let status = Command::new("sh")
+                .arg("-c")
+                .arg(mkdir_command)
+                .status()
+                .expect("Failed to run shell command");
+
+            if status.success() {
+                println!("Backup directory created: {}", backup_dir);
+                // copy /etc/hosts to backup_dir/hosts.bak.{cur_day}
+                let backup_command = format!("echo '{}' | sudo -S -- sh -c 'cp /etc/hosts {}/hosts.bak.{}'", password, backup_dir, cur_day);
+                let status = Command::new("sh")
+                    .arg("-c")
+                    .arg(backup_command)
+                    .status()
+                    .expect("Failed to run shell command");
+
+                if status.success() {
+                    println!("Backup of /etc/hosts created.");
+                } else {
+                    eprintln!("Error creating backup of /etc/hosts.");
+                }
+
+
+            } else {
+                eprintln!("Error creating backup directory.");
+            }
+        }
+    }
+}
+
 fn append_to_hosts_with_sudo(line: &str, password: &str) {
+    backup_hosts_file(password);
+
     let append_command = format!("echo '{}' | sudo -S -- sh -c 'echo \"{}\" >> /etc/hosts'", password, line);
 
     let status = Command::new("sh")
@@ -91,7 +133,7 @@ fn append_to_hosts_with_sudo(line: &str, password: &str) {
 
 
 #[tauri::command(rename_all = "snake_case")]
-fn add_cert_to_keychain(pem_file_path: String) {
+fn add_cert_to_keychain(pem_file_path: String) -> Result<(), String>{
     // Get the user's home directory
     if let Some(home_dir) = env::var_os("HOME") {
         if let Some(home_dir_str) = home_dir.to_str() {
@@ -115,14 +157,18 @@ fn add_cert_to_keychain(pem_file_path: String) {
             // Check the command's exit status
             if output.status.success() {
                 println!("Certificate added successfully.");
+                Ok(())
             } else {
                 eprintln!("Error: {:?}", output);
+                Err("Error adding certificate: reason: ".to_string() + &String::from_utf8_lossy(&output.stderr))
             }
         } else {
             eprintln!("Failed to convert home directory to string.");
+            Err("Failed to convert home directory to string".to_string())
         }
     } else {
         eprintln!("Home directory not found.");
+        Err("Home directory not found".to_string())
     }
 }
 
