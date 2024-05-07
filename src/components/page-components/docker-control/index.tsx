@@ -1,10 +1,10 @@
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { EndpointData } from "@/stores/proxy-list";
 import { BaseDirectory, readTextFile, writeTextFile } from "@tauri-apps/api/fs";
 import { appDataDir, resolveResource } from "@tauri-apps/api/path";
 import { Command } from "@tauri-apps/api/shell";
 import { useCallback, useState } from "react";
-import { EndpointData } from "../proxy-list/add-new";
 import DockerLogModal from "../proxy-list/docker-log";
 
 export default function DockerControl({

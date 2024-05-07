@@ -9,23 +9,24 @@ import {
 } from "@/components/ui/tooltip";
 import { CertificateManager } from "@/helpers/certificate-manager";
 import { EndpointManager } from "@/helpers/endpoint-manager";
+import proxyListStore, { EndpointData } from "@/stores/proxy-list";
 import { invoke } from "@tauri-apps/api";
 import { confirm } from "@tauri-apps/api/dialog";
 import { appDataDir } from "@tauri-apps/api/path";
 import { open as shellOpen } from "@tauri-apps/api/shell";
 import { useCallback, useEffect, useState } from "react";
 import DockerControl from "../docker-control";
-import { EndpointData } from "./add";
 import CreateProxyV2SideComponent from "./add-new";
 import RequestPasswordModal from "./request-certificate-trust";
 import EndpointListTable from "./table";
 
 export default function EndpointListComponent() {
   const [loaded, setLoaded] = useState(false);
-  const [endpointList, setEndpointList] = useState([]);
+  // const [endpointList, setEndpointList] = useState([]);
   const [openSide, setOpenSide] = useState(false);
 
   const [passwordModalShown, setPasswordModalOpen] = useState(false);
+  const { proxyList, setProxyList } = proxyListStore();
   const [currentEndpoint, setCurrentEndpoint] = useState<EndpointData>();
 
   const onDeleteFromHosts = useCallback(
@@ -61,21 +62,24 @@ export default function EndpointListComponent() {
   const prepareConfigPage = useCallback(async () => {
     const mgr = EndpointManager.sharedManager();
     const list = await mgr.get();
-    setEndpointList(list);
+    setProxyList(list);
     setLoaded(true);
   }, []);
 
-  const addEndpoint = useCallback(async (data: EndpointData) => {
-    const mgr = EndpointManager.sharedManager();
-    const endpointList = await mgr.get();
-    if (endpointList.find((e: EndpointData) => e.hostname === data.hostname)) {
-      // already exists
-      return;
-    }
-    endpointList.push(data);
-    mgr.save(endpointList);
-    setEndpointList(endpointList);
-  }, []);
+  const addProxyItem = useCallback(
+    async (data: EndpointData) => {
+      const mgr = EndpointManager.sharedManager();
+      const _proxyList = await mgr.get();
+      if (_proxyList.find((e: EndpointData) => e.hostname === data.hostname)) {
+        // already exists
+        return;
+      }
+      _proxyList.push(data);
+      mgr.save(_proxyList);
+      setProxyList(_proxyList);
+    },
+    [setProxyList]
+  );
 
   useEffect(() => {
     prepareConfigPage();
@@ -93,7 +97,7 @@ export default function EndpointListComponent() {
             setOpen={setOpenSide}
             onAdd={(data) => {
               setCurrentEndpoint(data);
-              addEndpoint(data);
+              addProxyItem(data);
             }}
           />
           <RequestPasswordModal
@@ -112,19 +116,19 @@ export default function EndpointListComponent() {
                 currentEndpoint.hostname
               );
 
-              const copiedList = [...endpointList];
+              const copiedList = [...proxyList];
               const index = copiedList.findIndex((e: EndpointData) => {
                 return e.hostname === currentEndpoint.hostname;
               });
               copiedList.splice(index, 1);
 
               endpointManager.save(copiedList);
-              setEndpointList(copiedList);
+              setProxyList(copiedList);
             }}
           />
           <div className="flex justify-between w-full fixed top-0 left-0 right-0 bg-gray-700 px-6 py-4 ">
             <div className="flex gap-2 items-center">
-              <DockerControl endpointList={endpointList} />
+              <DockerControl endpointList={proxyList} />
               <Tooltip>
                 <TooltipTrigger asChild>
                   <div
@@ -173,7 +177,7 @@ export default function EndpointListComponent() {
 
         <div className="p-4 mt-20">
           <EndpointListTable
-            list={endpointList}
+            list={proxyList}
             onDeleteEndpoint={onDeleteEndpoint}
             onAddEndpoint={() => {
               setOpenSide(true);

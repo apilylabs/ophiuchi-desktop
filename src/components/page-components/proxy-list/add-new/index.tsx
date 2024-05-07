@@ -1,6 +1,7 @@
 /* eslint-disable react/no-unescaped-entities */
 "use client";
 
+import { Button } from "@/components/ui/button";
 import Code from "@/components/ui/code";
 import MultiStateButton from "@/components/ui/multi-state-button";
 import {
@@ -9,6 +10,8 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { CertificateManager } from "@/helpers/certificate-manager";
+import { cn } from "@/lib/utils";
+import proxyListStore, { EndpointData } from "@/stores/proxy-list";
 import { Dialog, Transition } from "@headlessui/react";
 import {
   ArrowRightIcon,
@@ -25,12 +28,6 @@ import RequestPasswordModal from "../request-certificate-trust";
 
 const roboto = Roboto_Mono({ subsets: ["latin"] });
 const certMgr = CertificateManager.shared();
-
-export type EndpointData = {
-  nickname: string;
-  hostname: string;
-  port: number;
-};
 
 export default function CreateProxyV2SideComponent({
   open,
@@ -437,9 +434,21 @@ function CreateFormComponent({
 }: {
   onNextButton: (data: EndpointData) => void;
 }) {
+  const { proxyList } = proxyListStore();
+  const [hostnameExists, setHostnameExists] = useState(false);
+
   const formRef = useRef<HTMLFormElement>(null);
   const [hostnameState, setHostnameState] = useState<string>("");
   const [portState, setPortState] = useState<string>("");
+
+  const checkHostnameExists = useCallback(
+    (hostname: string) => {
+      setHostnameExists(
+        proxyList.some((endpoint) => endpoint.hostname === hostname)
+      );
+    },
+    [proxyList]
+  );
 
   const fixHostname = (hostname: string) => {
     return hostname.replace(/[^a-z0-9\-\.]/g, "");
@@ -492,23 +501,42 @@ function CreateFormComponent({
             type="text"
             name="hostname"
             required={true}
-            className="p-2 bg-transparent border border-gray-600 caret-gray-600 rounded-md text-gray-100 text-5xl"
+            className={cn(
+              hostnameExists
+                ? "border-red-500 text-red-400"
+                : "border-gray-600 text-gray-100",
+              "p-2 bg-transparent border caret-gray-600 rounded-md text-5xl"
+            )}
             placeholder="my.example.local"
             size={24}
             value={hostnameState}
-            onChange={(e) => setHostnameState(fixHostname(e.target.value))}
+            onChange={(e) => {
+              const hostname = fixHostname(e.target.value);
+              checkHostnameExists(hostname);
+              setHostnameState(hostname);
+            }}
           />
         </div>
       </div>
-      <div className="flex justify-center">
-        <button
+
+      {hostnameExists && (
+        <div className="w-full text-center">
+          <div className="text-red-500 text-sm">
+            Hostname already exists. Please choose another.
+          </div>
+        </div>
+      )}
+      <div className="mt-8 flex justify-center flex-col gap-4 mx-auto">
+        <Button
           type="submit"
-          className="block rounded-md bg-white px-6 py-2 text-center font-semibold text-gray-800 hover:bg-gray-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500 text-lg"
+          className="w-full max-w-sm"
+          size="lg"
+          disabled={hostnameExists}
         >
           <div className="flex gap-2 items-center">
             Next <ArrowRightIcon className="h-4 w-4" />
           </div>
-        </button>
+        </Button>
       </div>
     </form>
   );
