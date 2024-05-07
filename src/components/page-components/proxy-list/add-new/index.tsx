@@ -238,7 +238,8 @@ export default function CreateProxyV2SideComponent({
                                       A self-signed SSL certificate will be
                                       generated for the hostname. This is
                                       required for the browser to trust the
-                                      connection.
+                                      connection. You can locate them after the
+                                      wizard is done.
                                     </PopoverContent>
                                   </Popover>
                                 </p>
