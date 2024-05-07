@@ -22,7 +22,7 @@ export default function EndpointListComponent() {
   const [dockerProcessStream, setDockerProcessStream] = useState<any>("");
   const [passwordModalShown, setPasswordModalOpen] = useState(false);
   const [currentEndpoint, setCurrentEndpoint] = useState<EndpointData>();
-  const [currentMode, setCurrentMode] = useState<"add" | "delete">("add");
+  const [dockerNeedsRestart, setDockerNeedsRestart] = useState(false);
 
   const appendDockerProcessStream = useCallback((line: any) => {
     if (typeof line === "string") {
@@ -58,6 +58,7 @@ export default function EndpointListComponent() {
   };
   const startDocker = async () => {
     setDockerModalOpen(true);
+    setDockerNeedsRestart(false);
 
     await stopDocker();
 
@@ -100,28 +101,6 @@ export default function EndpointListComponent() {
     appendDockerProcessStream(`command spawned with pid ${child.pid}`);
   };
 
-  const onAddCertToKeychain = useCallback(async (endpoint: EndpointData) => {
-    const appDataDirPath = await appDataDir();
-    const pemFilePath = `${appDataDirPath}cert/${endpoint.hostname}/cert.pem`;
-    // support for whitespaces in path
-    // const whiteSpaced = pemFilePath.replace(/ /g, "\\ ");
-    invoke("add_cert_to_keychain", {
-      pem_file_path: `${pemFilePath}`,
-    });
-    // setPasswordModalOpen(true);
-    // setCurrentEndpoint(endpoint);
-  }, []);
-
-  const onAddToHosts = useCallback(
-    async (endpoint: EndpointData, password: string) => {
-      invoke("add_line_to_hosts", {
-        hostname: endpoint.hostname,
-        password: password,
-      });
-    },
-    []
-  );
-
   const onDeleteFromHosts = useCallback(
     async (endpoint: EndpointData, password: string) => {
       invoke("delete_line_from_hosts", {
@@ -137,36 +116,21 @@ export default function EndpointListComponent() {
     shellOpen(appDataDirPath);
   }, []);
 
-  const onDeleteEndpoint = useCallback(
-    async (endpoint: EndpointData) => {
-      const confirmed = await confirm(
-        `Are you sure to delete ${endpoint.nickname}?`
-      );
-      if (!confirmed) {
-        return;
-      }
+  const onDeleteEndpoint = useCallback(async (endpoint: EndpointData) => {
+    setCurrentEndpoint(endpoint);
+    const confirmed = await confirm(
+      `Are you sure to delete ${endpoint.nickname}?`
+    );
+    if (!confirmed) {
+      return;
+    }
 
-      const configHelper = new CertificateManager();
-      const endpointManager = EndpointManager.sharedManager();
-      invoke("remove_cert_from_keychain", {
-        name: `${endpoint.hostname}`,
-      });
-      configHelper.deleteCertificateFiles(endpoint.hostname);
-      configHelper.deleteNginxConfigurationFiles(endpoint.hostname);
-
-      const copiedList = [...endpointList];
-      const index = copiedList.findIndex((e: EndpointData) => {
-        return e.hostname === endpoint.hostname;
-      });
-      copiedList.splice(index, 1);
-
-      endpointManager.save(copiedList);
-      setEndpointList(copiedList);
-      setCurrentMode("delete");
-      setPasswordModalOpen(true);
-    },
-    [endpointList]
-  );
+    invoke("remove_cert_from_keychain", {
+      name: `${endpoint.hostname}`,
+    });
+    setDockerNeedsRestart(true);
+    setPasswordModalOpen(true);
+  }, []);
 
   const prepareConfigPage = useCallback(async () => {
     const mgr = EndpointManager.sharedManager();
@@ -175,25 +139,18 @@ export default function EndpointListComponent() {
     setLoaded(true);
   }, []);
 
-  const addEndpoint = useCallback(
-    async (data: EndpointData) => {
-      setCurrentMode("add");
-      const mgr = EndpointManager.sharedManager();
-      const endpointList = await mgr.get();
-      if (
-        endpointList.find((e: EndpointData) => e.hostname === data.hostname)
-      ) {
-        // already exists
-        return;
-      }
-      endpointList.push(data);
-      mgr.save(endpointList);
-      setEndpointList(endpointList);
-      onAddCertToKeychain(data);
-      setPasswordModalOpen(true);
-    },
-    [onAddCertToKeychain]
-  );
+  const addEndpoint = useCallback(async (data: EndpointData) => {
+    const mgr = EndpointManager.sharedManager();
+    const endpointList = await mgr.get();
+    if (endpointList.find((e: EndpointData) => e.hostname === data.hostname)) {
+      // already exists
+      return;
+    }
+    endpointList.push(data);
+    mgr.save(endpointList);
+    setDockerNeedsRestart(true);
+    setEndpointList(endpointList);
+  }, []);
 
   useEffect(() => {
     prepareConfigPage();
@@ -228,16 +185,31 @@ export default function EndpointListComponent() {
           onConfirm={function (password: string): void {
             setPasswordModalOpen(false);
             if (!currentEndpoint) return;
-            if (currentMode === "add") {
-              onAddToHosts(currentEndpoint, password);
-            } else {
-              onDeleteFromHosts(currentEndpoint, password);
-            }
+            onDeleteFromHosts(currentEndpoint, password);
+            const endpointManager = EndpointManager.sharedManager();
+            const configHelper = new CertificateManager();
+            configHelper.deleteCertificateFiles(currentEndpoint.hostname);
+            configHelper.deleteNginxConfigurationFiles(
+              currentEndpoint.hostname
+            );
+
+            const copiedList = [...endpointList];
+            const index = copiedList.findIndex((e: EndpointData) => {
+              return e.hostname === currentEndpoint.hostname;
+            });
+            copiedList.splice(index, 1);
+
+            endpointManager.save(copiedList);
+            setEndpointList(copiedList);
           }}
         />
         <div className="flex gap-2 px-4 py-4 fixed top-0 left-0 right-0 bg-gray-700">
           <div
-            className="p-2 bg-white text-gray-700 rounded-md cursor-pointer shadow-md hover:bg-gray-200 hover:text-gray-950 text-sm"
+            className={`p-2 ${
+              dockerNeedsRestart ? "bg-yellow-400" : "bg-white"
+            } text-gray-700 rounded-md cursor-pointer shadow-md ${
+              dockerNeedsRestart ? "hover:bg-yellow-300" : "hover:bg-gray-200"
+            } hover:text-gray-950 text-sm`}
             onClick={() => {
               if (endpointList.length === 0) {
                 return;
@@ -245,7 +217,7 @@ export default function EndpointListComponent() {
               startDocker();
             }}
           >
-            Start Docker
+            {dockerNeedsRestart ? "Restart Docker To Apply" : "Start Docker "}
           </div>
           <div
             className="p-2 underline cursor-pointer text-sm"
@@ -268,7 +240,6 @@ export default function EndpointListComponent() {
       <div className="p-4 mt-20">
         <EndpointListTable
           list={endpointList}
-          onAddCertToKeychain={onAddCertToKeychain}
           onDeleteEndpoint={onDeleteEndpoint}
           onAddEndpoint={() => {
             setOpenSide(true);

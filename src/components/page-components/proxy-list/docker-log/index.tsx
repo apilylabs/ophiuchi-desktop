@@ -57,7 +57,7 @@ export default function DockerLogModal({
                     as="h3"
                     className="text-lg font-medium leading-6 text-gray-900"
                   >
-                    Process Log
+                    Detailed Log
                   </Dialog.Title>
                   <div className="mt-2">
                     <div className="h-[50%] max-h-[400px] overflow-y-auto bg-gray-50 p-8">
