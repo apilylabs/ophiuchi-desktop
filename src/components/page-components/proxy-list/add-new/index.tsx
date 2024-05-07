@@ -1,9 +1,22 @@
 /* eslint-disable react/no-unescaped-entities */
 "use client";
 
+import Code from "@/components/ui/code";
+import MultiStateButton from "@/components/ui/multi-state-button";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 import { CertificateManager } from "@/helpers/certificate-manager";
 import { Dialog, Transition } from "@headlessui/react";
-import { ArrowRightIcon, XMarkIcon } from "@heroicons/react/24/outline";
+import {
+  ArrowRightIcon,
+  FingerPrintIcon,
+  KeyIcon,
+  QuestionMarkCircleIcon,
+  XMarkIcon,
+} from "@heroicons/react/24/outline";
 import { invoke } from "@tauri-apps/api";
 import { appDataDir } from "@tauri-apps/api/path";
 import { Roboto_Mono } from "next/font/google";
@@ -18,68 +31,6 @@ export type EndpointData = {
   hostname: string;
   port: number;
 };
-
-function MultiStateButton({
-  notReady,
-  ready,
-  done,
-}: {
-  notReady: {
-    current: boolean;
-    string: string;
-  };
-  ready: {
-    current: boolean;
-    string: string;
-    onClick: () => void;
-  };
-  done: {
-    current: boolean;
-    string: string;
-    onClick: () => void;
-  };
-}) {
-  function bgColor() {
-    if (done.current) return "";
-    if (ready.current) return "bg-yellow-500 animate-bounce";
-    if (notReady.current) return "bg-gray-600 cursor-not-allowed";
-  }
-
-  function hoverBgColor() {
-    if (done.current) return "hover:bg-gray-600";
-    if (ready.current) return "hover:bg-yellow-600";
-    if (notReady.current) return "hover:bg-gray-600";
-  }
-
-  function textColor() {
-    if (done.current) return "text-green-400";
-    if (ready.current) return "text-yellow-900 font-medium";
-    if (notReady.current) return "text-gray-900";
-  }
-
-  function displayString() {
-    if (done.current) return done.string;
-    if (ready.current) return ready.string;
-    if (notReady.current) return notReady.string;
-  }
-
-  return (
-    <button
-      onClick={() => {
-        if (notReady.current) return;
-        if (ready.current) {
-          ready.onClick();
-        } else if (done.current) {
-          done.onClick();
-        }
-      }}
-      className={`block rounded-md ${bgColor()} px-6 py-2 text-center ${textColor()} ${hoverBgColor()} focus-visible:outline 
-      focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500 shrink-0`}
-    >
-      <div className="flex gap-2 items-center">{displayString()}</div>
-    </button>
-  );
-}
 
 export default function CreateProxyV2SideComponent({
   open,
@@ -277,7 +228,20 @@ export default function CreateProxyV2SideComponent({
                                 Next, click each buttons to proceed:
                               </h3>
                               <div className="flex justify-between items-center py-8">
-                                <p>1. Generate SSL Certificate</p>
+                                <p className="flex gap-2 items-center">
+                                  1. Generate SSL Certificate{" "}
+                                  <Popover>
+                                    <PopoverTrigger>
+                                      <QuestionMarkCircleIcon className="w-4 h-4" />
+                                    </PopoverTrigger>
+                                    <PopoverContent side="top">
+                                      A self-signed SSL certificate will be
+                                      generated for the hostname. This is
+                                      required for the browser to trust the
+                                      connection.
+                                    </PopoverContent>
+                                  </Popover>
+                                </p>
                                 <div className="">
                                   <MultiStateButton
                                     notReady={{
@@ -302,20 +266,37 @@ export default function CreateProxyV2SideComponent({
                                 </div>
                               </div>
                               <div className="flex justify-between items-center py-8">
-                                <p>
-                                  2. Register certificate to Keychain Access &
-                                  trust certificate (requires sudo password or
-                                  fingerprint)
+                                <p className="flex gap-2 items-center">
+                                  2. Add certificate to Keychain Access & trust
+                                  certificate{" "}
+                                  <Code style="sudo">
+                                    <span className="flex gap-1 items-center">
+                                      <KeyIcon className="w-4 h-4" />/
+                                      <FingerPrintIcon className="w-4 h-4" />
+                                    </span>
+                                  </Code>
+                                  <Popover>
+                                    <PopoverTrigger>
+                                      <QuestionMarkCircleIcon className="w-4 h-4" />
+                                    </PopoverTrigger>
+                                    <PopoverContent side="top">
+                                      The certificate will be added to the
+                                      keychain and trusted. This is required for
+                                      the browser to trust the connection. You
+                                      will be asked for your password or
+                                      fingerprint.
+                                    </PopoverContent>
+                                  </Popover>
                                 </p>
                                 <div className="">
                                   <MultiStateButton
                                     notReady={{
                                       current: !sslCertGenComplete,
-                                      string: "Register",
+                                      string: "Add & Trust",
                                     }}
                                     ready={{
                                       current: sslCertGenComplete,
-                                      string: "Register & Trust",
+                                      string: "Add & Trust",
                                       onClick: function (): void {
                                         onAddCertToKeychain();
                                       },
@@ -331,12 +312,25 @@ export default function CreateProxyV2SideComponent({
                                 </div>
                               </div>
                               <div className="flex justify-between items-center py-8">
-                                <p className="">
+                                <p className="flex gap-2 items-center">
                                   3. Add{" "}
-                                  <code className="bg-gray-800 px-2 py-1 rounded-md">
-                                    127.0.0.1 {currentData?.hostname}
-                                  </code>{" "}
-                                  to /etc/hosts file (requires sudo password)
+                                  <Code>127.0.0.1 {currentData?.hostname}</Code>{" "}
+                                  to <Code>/etc/hosts</Code> file{" "}
+                                  <Code style="sudo">
+                                    <KeyIcon className="w-4 h-4" />
+                                  </Code>
+                                  <Popover>
+                                    <PopoverTrigger>
+                                      <QuestionMarkCircleIcon className="w-4 h-4" />
+                                    </PopoverTrigger>
+                                    <PopoverContent side="top">
+                                      <Code>{currentData?.hostname}</Code> will
+                                      be added to the <Code>/etc/hosts</Code>{" "}
+                                      file. This is required for the browser to
+                                      resolve the hostname to localhost. A modal
+                                      will be shown to ask for your password.
+                                    </PopoverContent>
+                                  </Popover>
                                 </p>
                                 <div className="">
                                   <MultiStateButton
@@ -362,7 +356,20 @@ export default function CreateProxyV2SideComponent({
                                 </div>
                               </div>
                               <div className="flex justify-between items-center py-8">
-                                <p>4. Generate Nginx Configuration</p>
+                                <p className="flex gap-2 items-center">
+                                  4. Generate Nginx Configuration
+                                  <Popover>
+                                    <PopoverTrigger>
+                                      <QuestionMarkCircleIcon className="w-4 h-4" />
+                                    </PopoverTrigger>
+                                    <PopoverContent side="top">
+                                      Nginx configuration files will be
+                                      generated for the hostname. This is
+                                      required for the proxy server to work over
+                                      docker.
+                                    </PopoverContent>
+                                  </Popover>
+                                </p>
                                 <MultiStateButton
                                   notReady={{
                                     current: !addToEtcHostsDone,

@@ -66,15 +66,11 @@ export function SetupComponent() {
           {currentJob}
         </div>
         <div className="mx-auto w-full flex">
-          <Button
-            className="w-full mt-4"
-            variant={"default"}
-            disabled={!showNext}
-          >
-            <Link href="/endpoint-list" className="">
+          <Link href="/endpoint-list" className="w-full mt-4">
+            <Button variant={"default"} disabled={!showNext} className="w-full">
               Start
-            </Link>
-          </Button>
+            </Button>
+          </Link>
         </div>
       </div>
     </div>
