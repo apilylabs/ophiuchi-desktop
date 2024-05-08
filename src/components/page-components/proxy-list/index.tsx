@@ -62,7 +62,7 @@ export default function EndpointListComponent() {
     const list = await mgr.get();
     setProxyList(list);
     setLoaded(true);
-  }, []);
+  }, [setProxyList]);
 
   useEffect(() => {
     prepareConfigPage();
