@@ -5,11 +5,11 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
+import { EndpointData } from "@/stores/proxy-list";
 import { PlusIcon } from "@heroicons/react/24/outline";
 import { appDataDir } from "@tauri-apps/api/path";
 import { open as shellOpen } from "@tauri-apps/api/shell";
 import { useCallback } from "react";
-import { EndpointData } from "../add-new";
 
 const people = [
   {
