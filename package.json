@@ -1,6 +1,6 @@
 {
   "name": "ophiuchi",
-  "version": "0.2.2",
+  "version": "0.2.3",
   "private": true,
   "scripts": {
     "tauri": "tauri",
@@ -8,7 +8,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "build:universal": "tauri build --target universal-apple-darwin"
+    "build:universal": "tauri build --target universal-apple-darwin",
+    "build:clean": "tauri build --target clean"
   },
   "dependencies": {
     "@headlessui/react": "^1.7.17",
