@@ -58,6 +58,14 @@
             "name": "check-docker-container-exists",
             "cmd": "docker",
             "args": true
+          },
+          {
+            "name": "open-docker-app",
+            "cmd": "open",
+            "args": [
+              "-a",
+              "Docker Desktop"
+            ]
           }
         ]
       }

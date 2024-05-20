@@ -1,4 +1,5 @@
 import { Dialog, Transition } from "@headlessui/react";
+import { Command } from "@tauri-apps/api/shell";
 import { Fragment, useEffect, useState } from "react";
 
 export default function DockerLogModal({
@@ -69,7 +70,7 @@ export default function DockerLogModal({
                     </div>
                   </div>
 
-                  <div className="mt-4">
+                  <div className="mt-4 flex items-center gap-4">
                     <button
                       type="button"
                       className="inline-flex justify-center rounded-md border border-transparent bg-blue-100 px-4 py-2 text-sm font-medium text-blue-900 hover:bg-blue-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
@@ -77,6 +78,16 @@ export default function DockerLogModal({
                     >
                       Close
                     </button>
+                    <p
+                      className="text-sm text-gray-800 cursor-pointer underline"
+                      onClick={async () => {
+                        const openDockerCmd = new Command("open-docker-app");
+                        const openDockerOutput = await openDockerCmd.execute();
+                        console.log(openDockerOutput);
+                      }}
+                    >
+                      Open Docker Desktop
+                    </p>
                   </div>
                 </Dialog.Panel>
               </Transition.Child>
