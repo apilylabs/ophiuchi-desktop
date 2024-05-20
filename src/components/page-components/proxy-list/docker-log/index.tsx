@@ -54,7 +54,7 @@ export default function DockerLogModal({
                 leaveFrom="opacity-100 scale-100"
                 leaveTo="opacity-0 scale-95"
               >
-                <Dialog.Panel className="w-full max-w-6xl transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all">
+                <Dialog.Panel className="w-full max-w-2xl transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all">
                   <Dialog.Title
                     as="h3"
                     className="text-lg font-medium leading-6 text-gray-900"
@@ -62,8 +62,8 @@ export default function DockerLogModal({
                     Docker Command Log
                   </Dialog.Title>
                   <div className="mt-2">
-                    <div className="h-[50%] max-h-[400px] overflow-y-auto bg-gray-50 p-8">
-                      <code className="text-sm text-gray-500 whitespace-pre-wrap">
+                    <div className="h-[50%] max-h-[400px] overflow-y-auto bg-gray-50 p-8 min-h-[400px]">
+                      <code className="text-sm text-gray-500 whitespace-pre-wrap ">
                         {stream}
                       </code>
                     </div>
