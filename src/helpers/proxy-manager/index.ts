@@ -12,12 +12,12 @@ const FILE_NAME = "app.endpoint.json";
 
 let mgr: any = undefined;
 
-export class EndpointManager implements IFileManagerBase {
+export class ProxyManager implements IFileManagerBase {
   constructor() {}
 
-  static sharedManager(): EndpointManager {
+  static sharedManager(): ProxyManager {
     if (!mgr) {
-      mgr = new EndpointManager();
+      mgr = new ProxyManager();
     }
     return mgr;
   }

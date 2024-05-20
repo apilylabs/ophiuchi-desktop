@@ -8,7 +8,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { CertificateManager } from "@/helpers/certificate-manager";
-import { EndpointManager } from "@/helpers/endpoint-manager";
+import { ProxyManager } from "@/helpers/proxy-manager";
 import proxyListStore, { EndpointData } from "@/stores/proxy-list";
 import { invoke } from "@tauri-apps/api";
 import { confirm } from "@tauri-apps/api/dialog";
@@ -58,7 +58,7 @@ export default function EndpointListComponent() {
   }, []);
 
   const prepareConfigPage = useCallback(async () => {
-    const mgr = EndpointManager.sharedManager();
+    const mgr = ProxyManager.sharedManager();
     const list = await mgr.get();
     setProxyList(list);
     setLoaded(true);
@@ -90,7 +90,7 @@ export default function EndpointListComponent() {
               setPasswordModalOpen(false);
               if (!currentEndpoint) return;
               onDeleteFromHosts(currentEndpoint, password);
-              const endpointManager = EndpointManager.sharedManager();
+              const endpointManager = ProxyManager.sharedManager();
               const configHelper = new CertificateManager();
               configHelper.deleteCertificateFiles(currentEndpoint.hostname);
               configHelper.deleteNginxConfigurationFiles(

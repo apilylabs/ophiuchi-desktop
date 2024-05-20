@@ -1,5 +1,5 @@
 import { BaseDirectory } from "@tauri-apps/api/fs";
-import { EndpointManager } from "../endpoint-manager";
+import { ProxyManager } from "../proxy-manager";
 
 export const CONFIG_PATH = "Config";
 export const CONFIG_FILENAME = "app.config.json";
@@ -12,7 +12,7 @@ export class SystemHelper {
   }
 
   async boot() {
-    const mgr = EndpointManager.sharedManager();
+    const mgr = ProxyManager.sharedManager();
     await mgr.boot();
     await new Promise((resolve) => setTimeout(resolve, 1500));
   }
