@@ -6,6 +6,7 @@ import {
   writeTextFile,
 } from "@tauri-apps/api/fs";
 import { IFileManagerBase } from "../file-manager";
+import { createGroupIfNotExists } from "./migration/001-create-group";
 
 const CONFIG_DIR = "Config";
 const FILE_NAME = "app.endpoint.json";
@@ -43,6 +44,7 @@ export class ProxyManager implements IFileManagerBase {
 
   async migrate() {
     const bool: boolean = await new Promise((resolve, reject) => {
+      createGroupIfNotExists(mgr!);
       resolve(true);
     });
     return bool;
