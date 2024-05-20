@@ -10,7 +10,7 @@ import { IFileManagerBase } from "../file-manager";
 const CONFIG_DIR = "Config";
 const FILE_NAME = "app.endpoint.json";
 
-let mgr: any = undefined;
+let mgr: ProxyManager | undefined = undefined;
 
 export class ProxyManager implements IFileManagerBase {
   constructor() {}
