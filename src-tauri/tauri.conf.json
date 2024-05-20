@@ -53,6 +53,11 @@
             "name": "stop-docker-compose",
             "cmd": "docker",
             "args": true
+          },
+          {
+            "name": "check-docker-container-exists",
+            "cmd": "docker",
+            "args": true
           }
         ]
       }

@@ -3,10 +3,12 @@ import { Fragment, useEffect, useState } from "react";
 
 export default function DockerLogModal({
   stream,
+  detailedStream,
   isOpen,
   onClosed,
 }: {
   stream: any;
+  detailedStream: any;
   isOpen: boolean;
   onClosed?: () => void;
 }) {
@@ -52,12 +54,12 @@ export default function DockerLogModal({
                 leaveFrom="opacity-100 scale-100"
                 leaveTo="opacity-0 scale-95"
               >
-                <Dialog.Panel className="w-full max-w-2xl transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all">
+                <Dialog.Panel className="w-full max-w-6xl transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all">
                   <Dialog.Title
                     as="h3"
                     className="text-lg font-medium leading-6 text-gray-900"
                   >
-                    Detailed Log
+                    Docker Command Log
                   </Dialog.Title>
                   <div className="mt-2">
                     <div className="h-[50%] max-h-[400px] overflow-y-auto bg-gray-50 p-8">
