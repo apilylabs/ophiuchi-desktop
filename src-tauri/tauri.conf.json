@@ -60,6 +60,13 @@
             "args": true
           },
           {
+            "name": "docker-version",
+            "cmd": "docker",
+            "args": [
+              "--version"
+            ]
+          },
+          {
             "name": "open-docker-app",
             "cmd": "open",
             "args": [

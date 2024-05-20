@@ -209,6 +209,22 @@ fn remove_cert_from_keychain(name: String) {
     }
 }
 
+#[tauri::command(rename_all = "snake_case")]
+fn check_docker_installed() -> Result<bool, String> {
+    let output = Command::new("docker").arg("--version").output();
+
+    match output {
+        Ok(output) => {
+            if output.status.success() {
+                Ok(true)
+            } else {
+                Ok(false)
+            }
+        }
+        Err(err) => Err(format!("Failed to execute command: {}", err)),
+    }
+}
+
 fn main() {
     let _ = fix_path_env::fix();
 
@@ -227,6 +243,7 @@ let _guard = sentry_tauri::minidump::init(&client);
   tauri::Builder::default()
     .plugin(sentry_tauri::plugin())
     .invoke_handler(tauri::generate_handler![
+        check_docker_installed,
         add_cert_to_keychain, 
         remove_cert_from_keychain,
         add_line_to_hosts,

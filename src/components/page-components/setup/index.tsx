@@ -3,6 +3,7 @@
 import { SystemHelper } from "@/helpers/system";
 // When using the Tauri API npm package:
 import { Button } from "@/components/ui/button";
+import { invoke } from "@tauri-apps/api";
 import Link from "next/link";
 import { useCallback, useEffect, useState } from "react";
 import pkg from "../../../../package.json";
@@ -33,13 +34,31 @@ function randomScentence() {
 export function SetupComponent() {
   const [currentJob, setCurrentJob] = useState("");
   const [showNext, setShowNext] = useState(false);
+  const [dockerInstalled, setDockerInstalled] = useState(false);
+
+  async function checkDocker() {
+    try {
+      const isInstalled = (await invoke("check_docker_installed")) as boolean;
+      setDockerInstalled(isInstalled);
+      return isInstalled;
+    } catch (error) {
+      console.error("Error checking Docker installation:", error);
+    }
+  }
 
   const onStartApp = useCallback(async () => {
     const s = randomScentence();
     setCurrentJob(s);
     const systemHelper = new SystemHelper();
     await systemHelper.boot();
-    setCurrentJob("Loading complete. Click Start.");
+    if (await checkDocker()) {
+      setCurrentJob("Loading complete. Click Start.");
+    } else {
+      setCurrentJob(
+        "Docker not installed! Please install Docker and restart app."
+      );
+      return;
+    }
     setShowNext(true);
   }, []);
 
@@ -49,6 +68,8 @@ export function SetupComponent() {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [showNext]);
+
+  const canProceed = showNext && dockerInstalled;
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen py-2 text-gray-100 bg-gray-900">
@@ -66,8 +87,15 @@ export function SetupComponent() {
           {currentJob}
         </div>
         <div className="mx-auto w-full flex">
-          <Link href="/endpoint-list" className="w-full mt-4">
-            <Button variant={"default"} disabled={!showNext} className="w-full">
+          <Link
+            href={canProceed ? "/endpoint-list" : "#"}
+            className="w-full mt-4"
+          >
+            <Button
+              variant={"default"}
+              disabled={!canProceed}
+              className="w-full"
+            >
               Start
             </Button>
           </Link>
