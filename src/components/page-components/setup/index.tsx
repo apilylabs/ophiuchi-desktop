@@ -3,6 +3,8 @@
 import { SystemHelper } from "@/helpers/system";
 // When using the Tauri API npm package:
 import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
+import { ArrowRightIcon } from "@heroicons/react/24/outline";
 import { invoke } from "@tauri-apps/api";
 import Link from "next/link";
 import { useCallback, useEffect, useState } from "react";
@@ -52,7 +54,7 @@ export function SetupComponent() {
     const systemHelper = new SystemHelper();
     await systemHelper.boot();
     if (await checkDocker()) {
-      setCurrentJob("Loading complete. Click Start.");
+      setCurrentJob("Loading complete! Click Start.");
     } else {
       setCurrentJob(
         "Docker not installed! Please install Docker and restart app."
@@ -74,29 +76,34 @@ export function SetupComponent() {
   return (
     <div className="flex flex-col items-center justify-center min-h-screen py-2 text-gray-100 bg-gray-900">
       <div className="mx-auto max-w-sm w-full">
-        <div className="py-4 w-full">
-          <h1 className="text-4xl tracking-tight font-semibold text-gray-100">
+        <div className="py-4 w-full text-center">
+          <h1 className="text-5xl font-bold tracking-tighter text-gray-100">
             Ophiuchi
-            <span className="text-xs text-gray-400 ml-3">{pkg.version}</span>
+            <span className="text-xs text-gray-400 ml-3 font-light tracking-tight">
+              {pkg.version}
+            </span>
           </h1>
-          <p className="text-gray-300 text-sm mt-2">
-            SSL Proxy Server Manager for your Localhost Environment
+          <p className="text-gray-300 text-sm font-light mt-3">
+            Localhost SSL Proxy Server Manager
           </p>
         </div>
-        <div className="rounded-xl bg-blue-950 px-12 py-8 mt-8 w-full text-center">
+        <div className="rounded-xl bg-gray-950 px-12 py-8 mt-8 w-full text-gray-300 text-sm min-h-[140px] flex items-center justify-center">
           {currentJob}
         </div>
         <div className="mx-auto w-full flex">
           <Link
             href={canProceed ? "/endpoint-list" : "#"}
-            className="w-full mt-4"
+            className={cn(
+              "w-full mt-4",
+              canProceed ? "cursor-pointer" : "cursor-not-allowed"
+            )}
           >
             <Button
-              variant={"default"}
+              variant={"start"}
               disabled={!canProceed}
-              className="w-full"
+              className="w-full gap-2 duration-500"
             >
-              Start
+              Start <ArrowRightIcon className="w-4 h-4" />
             </Button>
           </Link>
         </div>
