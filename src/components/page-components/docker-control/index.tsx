@@ -51,8 +51,14 @@ export default function DockerControl({}: {}) {
         const linesFlattened = lines.join("\n");
         appendDockerProcessStream(`${linesFlattened}`, true);
         if (linesFlattened.includes("ophiuchi-nginx")) {
+          appendDockerProcessStream(
+            `✅ Container exists. Ophiuchi will remove container...`
+          );
           resolve(true);
         } else {
+          appendDockerProcessStream(
+            `🚧 Container doesn't exist. Ophiuchi start container now.`
+          );
           resolve(false);
         }
         // if (data.code == 0) {
@@ -87,12 +93,12 @@ export default function DockerControl({}: {}) {
       command.on("close", (data) => {
         if (data.code == 0) {
           appendDockerProcessStream(
-            `✅ Remove container successfully finished.`
+            `✅ Remove container successfully finished!`
           );
           appendDockerProcessStream("💤 Waiting for Docker to settle...");
           setTimeout(() => {
             resolve();
-          }, 5000);
+          }, 2500);
         } else {
           appendDockerProcessStream(
             `🚨 Remove container failed with code ${data.code} and signal ${data.signal}`
@@ -135,7 +141,7 @@ export default function DockerControl({}: {}) {
     console.log(`resourcePath: ${resourcePath}`);
     const dockerComposeTemplate = await readTextFile(resourcePath);
 
-    appendDockerProcessStream(`👉 Starting Docker...`);
+    appendDockerProcessStream(`👉 Starting container...`);
     await writeTextFile(`docker-compose.yml`, dockerComposeTemplate, {
       dir: BaseDirectory.AppData,
     });
@@ -153,7 +159,7 @@ export default function DockerControl({}: {}) {
     command.on("close", (data) => {
       if (data.code == 0) {
         appendDockerProcessStream(
-          `✅ Starting container successfully finished.`
+          `✅ Starting container successfully finished!`
         );
       } else {
         appendDockerProcessStream(
