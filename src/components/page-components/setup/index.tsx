@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element */
 "use client";
 
 import { SystemHelper } from "@/helpers/system";
@@ -74,8 +75,9 @@ export function SetupComponent() {
   const canProceed = showNext && dockerInstalled;
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen py-2 text-gray-100 bg-gray-900">
-      <div className="mx-auto max-w-sm w-full">
+    <div className="flex flex-col items-center justify-center min-h-screen py-2 text-gray-100 bg-black">
+      <img src="/bg1.jpg" className="fixed inset-0 -z-0 opacity-50" alt="" />
+      <div className="mx-auto max-w-sm w-full z-10">
         <div className="py-4 w-full text-center">
           <h1 className="text-5xl font-bold tracking-tighter text-gray-100">
             Ophiuchi
@@ -87,7 +89,7 @@ export function SetupComponent() {
             Localhost SSL Proxy Server Manager
           </p>
         </div>
-        <div className="rounded-xl bg-gray-950 px-12 py-8 mt-8 w-full text-gray-300 text-sm min-h-[140px] flex items-center justify-center">
+        <div className="rounded-xl bg-gray-900 px-12 py-8 mt-8 w-full text-gray-300 text-sm min-h-[140px] flex items-center justify-center">
           {currentJob}
         </div>
         <div className="mx-auto w-full flex">
