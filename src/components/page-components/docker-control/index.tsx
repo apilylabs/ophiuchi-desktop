@@ -150,7 +150,6 @@ export default function DockerControl({}: {}) {
 
     const command = new Command("run-docker-compose", [
       "compose",
-      "-v",
       "-f",
       `${appDataDirPath}/docker-compose.yml`,
       "up",
