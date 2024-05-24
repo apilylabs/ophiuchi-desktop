@@ -109,6 +109,26 @@ export function SetupComponent() {
             </Button>
           </Link>
         </div>
+        <div className="text-xs bg-gray-400 p-2 rounded-md mt-4">
+          <p className="font-medium text-gray-900">Alpha Notice & Disclaimer</p>
+          <p className="text-gray-800 mt-1">
+            Please note that the app is in the alpha phase, thus features may be
+            added or removed without notice as we gather feedback and make
+            improvements to the app. <br />
+            This app may backup & edit one or more system files, use this at
+            your own risk!
+            <br />
+            For detailed assistance, visit our{" "}
+            <a
+              href="https://discord.gg/fpp8kNyPtz"
+              target="_blank"
+              className="underline"
+            >
+              Discord
+            </a>
+            .
+          </p>
+        </div>
       </div>
     </div>
   );
