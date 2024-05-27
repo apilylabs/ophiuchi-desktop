@@ -16,8 +16,8 @@ import DockerControl from "../docker-control";
 import { ProxyGroupSelect } from "./group-select";
 import ProxyListTable from "./table";
 
-export default function EndpointListComponent() {
-  const { proxyList, selectedGroup, setProxyList } = proxyListStore();
+export default function ProxyListComponent() {
+  const { proxyList } = proxyListStore();
 
   const openAppData = useCallback(async () => {
     const appDataDirPath = await appDataDir();
