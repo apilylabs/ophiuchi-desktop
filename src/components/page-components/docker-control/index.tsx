@@ -1,4 +1,5 @@
 import { Button } from "@/components/ui/button";
+import { CertificateManager } from "@/helpers/certificate-manager";
 import { cn } from "@/lib/utils";
 import proxyListStore from "@/stores/proxy-list";
 import { BaseDirectory, readTextFile, writeTextFile } from "@tauri-apps/api/fs";
@@ -83,6 +84,9 @@ export default function DockerControl({}: {}) {
 
   const stopDocker = async () => {
     const appDataDirPath = await appDataDir();
+    const certMgr = CertificateManager.shared();
+    await certMgr.deleteAllNginxConfigurationFiles();
+
     return new Promise<void>((resolve, reject) => {
       const command = new Command("stop-docker-compose", [
         "compose",
@@ -135,9 +139,21 @@ export default function DockerControl({}: {}) {
       await stopDocker();
     }
 
+    const certMgr = CertificateManager.shared();
+    const nginxGen = proxyList.map((proxy) => {
+      return certMgr.generateNginxConfigurationFiles(
+        proxy.hostname,
+        proxy.port
+      );
+    });
+
+    // generate nginx configuration files
+    await Promise.all(nginxGen);
+
     const resourcePath = await resolveResource(
       "bundle/templates/docker-compose.yml.template"
     );
+
     console.log(`resourcePath: ${resourcePath}`);
     const dockerComposeTemplate = await readTextFile(resourcePath);
 

@@ -12,7 +12,7 @@ export default function Code({
   }
 
   function bgColor() {
-    return style === "normal" ? "bg-gray-900" : "bg-red-950";
+    return style === "normal" ? "bg-zinc-900" : "bg-red-950";
   }
 
   return (

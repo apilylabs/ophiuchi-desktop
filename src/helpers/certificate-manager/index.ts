@@ -20,6 +20,13 @@ export class CertificateManager {
     });
   }
 
+  async deleteAllNginxConfigurationFiles() {
+    await removeDir(`conf/conf.d`, {
+      dir: BaseDirectory.AppData,
+      recursive: true,
+    });
+  }
+
   async deleteNginxConfigurationFiles(hostname: string) {
     await removeFile(`conf/conf.d/${hostname}.conf`, {
       dir: BaseDirectory.AppData,

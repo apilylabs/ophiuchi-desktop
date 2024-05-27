@@ -89,7 +89,7 @@ export function SetupComponent() {
             Localhost SSL Proxy Server Manager
           </p>
         </div>
-        <div className="rounded-xl bg-gray-900 px-12 py-8 mt-8 w-full text-gray-300 text-sm min-h-[140px] flex items-center justify-center">
+        <div className="rounded-xl bg-zinc-900 px-12 py-8 mt-8 w-full text-gray-300 text-sm min-h-[140px] flex items-center justify-center">
           {currentJob}
         </div>
         <div className="mx-auto w-full flex">
@@ -109,7 +109,7 @@ export function SetupComponent() {
             </Button>
           </Link>
         </div>
-        <div className="text-xs bg-gray-400 p-2 rounded-md mt-4">
+        <div className="text-xs bg-zinc-400 p-2 rounded-md mt-4">
           <p className="font-medium text-gray-900">Alpha Notice & Disclaimer</p>
           <p className="text-gray-800 mt-1">
             Please note that the app is in the alpha phase, thus features may be
