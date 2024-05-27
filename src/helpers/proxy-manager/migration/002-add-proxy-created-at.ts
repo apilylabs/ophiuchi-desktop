@@ -7,4 +7,5 @@ export async function m002_addProxyCreatedAt(mgrInstance: ProxyManager) {
       proxy.createdAt = new Date().toISOString();
     }
   });
+  await mgrInstance.saveProxies(_proxyList);
 }

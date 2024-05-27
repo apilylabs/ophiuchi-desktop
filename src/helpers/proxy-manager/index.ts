@@ -9,6 +9,7 @@ import { IFileManagerBase } from "../file-manager";
 import { CONFIG_DIR, GROUP_FILE_NAME, PROXY_FILE_NAME } from "./constants";
 import { IProxyData, IProxyGroupData } from "./interfaces";
 import { m001_createGroupIfNotExists } from "./migration/001-create-group";
+import { m002_addProxyCreatedAt } from "./migration/002-add-proxy-created-at";
 
 let mgr: ProxyManager | undefined = undefined;
 
@@ -49,6 +50,7 @@ export class ProxyManager implements IFileManagerBase {
 
   async migrate() {
     await m001_createGroupIfNotExists(mgr!);
+    await m002_addProxyCreatedAt(mgr!);
     return true;
   }
 
