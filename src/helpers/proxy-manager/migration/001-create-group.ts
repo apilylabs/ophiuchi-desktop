@@ -15,13 +15,13 @@ export async function m001_createGroupIfNotExists(mgrInstance: ProxyManager) {
     await createDir(CONFIG_DIR, { dir, recursive: true });
   }
   // create group file if not exists
-  const fileExist = await exists(`${CONFIG_DIR}/${GROUP_FILE_NAME}`, { dir });
-  if (!fileExist) {
-    const proxies = await mgrInstance.getProxies();
+  const fileExists = await exists(`${CONFIG_DIR}/${GROUP_FILE_NAME}`, { dir });
+  if (!fileExists) {
     const defaultGroup: IProxyGroupData = {
       id: DEFAULT_PROXY_GROUP_ID,
       name: DEFAULT_PROXY_GROUP_NAME,
-      proxyHosts: proxies.map((p) => p.hostname),
+      includedHosts: [],
+      isNoGroup: true,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
     };

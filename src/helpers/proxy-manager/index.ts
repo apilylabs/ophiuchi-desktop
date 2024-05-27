@@ -74,7 +74,7 @@ export class ProxyManager implements IFileManagerBase {
     const dir = this.getBaseDir();
 
     const cleaned: IProxyGroupData[] = data.map((d) => {
-      const cleanedProxyHosts = d.proxyHosts.map((p) => {
+      const cleanedincludedHosts = d.includedHosts.map((p) => {
         if (typeof p === "object") {
           return (p as IProxyData).hostname;
         }
@@ -83,7 +83,7 @@ export class ProxyManager implements IFileManagerBase {
       return {
         ...d,
         updatedAt: new Date().toISOString(),
-        proxyHosts: cleanedProxyHosts,
+        includedHosts: cleanedincludedHosts,
       };
     });
     await writeTextFile(
@@ -111,7 +111,7 @@ export class ProxyManager implements IFileManagerBase {
     const proxies = await this.getProxies();
     const identifiedGroup = groups.filter((p) => p.name === groupName);
     const mapped = identifiedGroup.map((g) => {
-      return g.proxyHosts.map((host) => {
+      return g.includedHosts.map((host) => {
         return proxies.find((p) => p.hostname === host);
       });
     });
