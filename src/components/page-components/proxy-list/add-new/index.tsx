@@ -363,7 +363,7 @@ export default function CreateProxyV2SideComponent({
                                   />
                                 </div>
                               </div>
-                              <div className="flex justify-between items-center py-8">
+                              {/* <div className="flex justify-between items-center py-8">
                                 <p className="flex gap-2 items-center">
                                   4. Generate Nginx configuration file
                                   <Popover>
@@ -398,16 +398,16 @@ export default function CreateProxyV2SideComponent({
                                     },
                                   }}
                                 />
-                              </div>
+                              </div> */}
                               <div className="flex justify-between items-center py-8">
                                 <p>5. Close Wizard</p>
                                 <MultiStateButton
                                   notReady={{
-                                    current: !generateNginxConfDone,
+                                    current: !addToEtcHostsDone,
                                     string: "Waiting",
                                   }}
                                   ready={{
-                                    current: generateNginxConfDone,
+                                    current: addToEtcHostsDone,
                                     string: "Close",
                                     onClick: function (): void {
                                       if (currentData && selectedGroup) {
