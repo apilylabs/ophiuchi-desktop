@@ -66,7 +66,7 @@ export function ProxyGroupSelect({
                       key={group.id}
                       value={group.id}
                       onSelect={(currentValue) => {
-                        setValue(currentValue === value ? "" : currentValue);
+                        setValue(currentValue);
                         setSelectedGroup(group);
                         setOpen(false);
                       }}
