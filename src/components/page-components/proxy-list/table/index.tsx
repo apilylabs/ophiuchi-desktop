@@ -10,6 +10,7 @@ import { IProxyData } from "@/helpers/proxy-manager/interfaces";
 import { cn } from "@/lib/utils";
 import proxyListStore from "@/stores/proxy-list";
 import { PlusIcon } from "@heroicons/react/24/outline";
+import { Label } from "@radix-ui/react-label";
 import { invoke } from "@tauri-apps/api";
 import { appDataDir } from "@tauri-apps/api/path";
 import { open as shellOpen } from "@tauri-apps/api/shell";
@@ -111,14 +112,14 @@ export default function ProxyListTable({ list }: { list: any[] }) {
           setProxyList(copiedList);
         }}
       />
-      <div className="px-4">
+      <div className="px-4 border border-gray-700 rounded-md py-4">
         <div className="sm:flex sm:items-center">
           <div className="sm:flex-auto">
-            <h1 className="text-base font-semibold leading-6 text-white">
-              Your Proxies
-            </h1>
+            <Label className="font-medium leading-6 text-white">
+              Your Proxies in {selectedGroup?.name ?? "Default Group"}
+            </Label>
             <p className="mt-2 text-sm text-gray-300">
-              List of proxies that are currently registered.
+              List of proxies that are in the selected group.
             </p>
           </div>
           <div className="mt-4 sm:ml-16 sm:mt-0 sm:flex-none">
@@ -198,16 +199,6 @@ export default function ProxyListTable({ list }: { list: any[] }) {
                       <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-300">
                         {endpoint.port}
                       </td>
-                      {/* <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-300">
-                      <p
-                        className="underline cursor-pointer"
-                        onClick={() => {
-                          onAddCertToKeychain(endpoint);
-                        }}
-                      >
-                        Trust SSL Cert
-                      </p>
-                    </td> */}
                       <td className="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-0">
                         <div className="flex gap-6 justify-end">
                           <p

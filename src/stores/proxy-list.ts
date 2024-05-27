@@ -54,7 +54,13 @@ const proxyListStore = create<ProxyListStore>((set, get) => ({
     };
     const mgr = ProxyManager.sharedManager();
     const _groupList = await mgr.getGroups();
+    const _proxyList = await mgr.getProxies();
     _groupList.push(newGroupData);
+    set({ groupList: _groupList, selectedGroup: newGroupData });
+    const filteredList = _proxyList.filter((el) =>
+      newGroupData.proxyHosts.find((e) => e === el.hostname)
+    );
+    set({ proxyList: filteredList });
     mgr.saveGroups(_groupList);
   },
   removeGroup: async (groupId: string) => {
@@ -101,7 +107,15 @@ const proxyListStore = create<ProxyListStore>((set, get) => ({
   //       g.length > 0 ? g.find((el) => el.id === DEFAULT_PROXY_GROUP_ID) : null,
   //   });
   // },
-  setSelectedGroup: (group: IProxyGroupData) => set({ selectedGroup: group }),
+  setSelectedGroup: async (group: IProxyGroupData) => {
+    const mgr = ProxyManager.sharedManager();
+    const _proxyList = await mgr.getProxies();
+    const filteredList = _proxyList.filter((el) =>
+      group.proxyHosts.find((e) => e === el.hostname)
+    );
+    set({ selectedGroup: group });
+    set({ proxyList: filteredList });
+  },
 }));
 
 export default proxyListStore;

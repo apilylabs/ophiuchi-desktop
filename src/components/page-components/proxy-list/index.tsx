@@ -17,13 +17,8 @@ import { ProxyGroupSelect } from "./group-select";
 import ProxyListTable from "./table";
 
 export default function EndpointListComponent() {
-  const {
-    proxyList,
-    selectedGroup,
-    setProxyList,
-    addProxyItem,
-    setProxyGroupList,
-  } = proxyListStore();
+  const { proxyList, selectedGroup, setProxyList, addProxyItem } =
+    proxyListStore();
 
   const openAppData = useCallback(async () => {
     const appDataDirPath = await appDataDir();
@@ -85,8 +80,12 @@ export default function EndpointListComponent() {
 
         <div className="p-4 mt-20">
           <div className="flex flex-col gap-2 mb-4">
-            <Label className="font-medium">Select Group</Label>
-            <ProxyGroupSelect />
+            <Label className="text-base font-medium">Select Group</Label>
+            <ProxyGroupSelect
+              onAddGroupButton={() => {
+                // wow!
+              }}
+            />
           </div>
           <ProxyListTable list={proxyList} />
         </div>
