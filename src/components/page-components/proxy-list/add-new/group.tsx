@@ -41,7 +41,6 @@ export function AddProxyGroupDialog({ onDone }: { onDone: () => void }) {
             </Label>
             <Input
               id="name"
-              defaultValue=""
               placeholder="ex) Workplace"
               value={groupName}
               onChange={(e) => {

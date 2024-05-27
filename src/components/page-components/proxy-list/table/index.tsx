@@ -1,5 +1,14 @@
 import { Button } from "@/components/ui/button";
 import {
+  Table,
+  TableBody,
+  TableCaption,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import {
   Tooltip,
   TooltipContent,
   TooltipTrigger,
@@ -16,6 +25,7 @@ import { appDataDir } from "@tauri-apps/api/path";
 import { open as shellOpen } from "@tauri-apps/api/shell";
 import { useCallback, useEffect, useState } from "react";
 import CreateProxyV2SideComponent from "../add-new";
+import { AddProxyToGroupDialog } from "../add-new/proxy-to-group";
 import RequestPasswordModal from "../request-certificate-trust";
 
 const people = [
@@ -28,8 +38,9 @@ const people = [
   // More people...
 ];
 
-export default function ProxyListTable({ list }: { list: any[] }) {
-  const { load, proxyList, selectedGroup, setProxyList } = proxyListStore();
+export default function ProxyListTable() {
+  const { load, proxyList, selectedGroup, setProxyList, removeProxyFromGroup } =
+    proxyListStore();
 
   const [loaded, setLoaded] = useState(false);
   const [openSide, setOpenSide] = useState(false);
@@ -102,7 +113,7 @@ export default function ProxyListTable({ list }: { list: any[] }) {
           setProxyList(copiedList);
         }}
       />
-      <div className="px-4 border border-gray-700 rounded-md py-4">
+      <div className="px-4 border border-zinc-700 rounded-md py-4">
         <div className="sm:flex sm:items-center">
           <div className="sm:flex-auto">
             <Label className="font-medium leading-6 text-white">
@@ -113,108 +124,98 @@ export default function ProxyListTable({ list }: { list: any[] }) {
             </p>
           </div>
           <div className="mt-4 sm:ml-16 sm:mt-0 sm:flex-none">
-            <Button
-              variant={"default"}
-              className={cn(
-                "flex gap-2 items-center",
-                list.length === 0 ? "animate-bounce" : ""
-              )}
-              onClick={() => {
-                setOpenSide(true);
-              }}
-            >
-              <PlusIcon className="w-4 h-4" />
-              Create Proxy
-            </Button>
+            {selectedGroup?.isNoGroup ? (
+              <Button
+                variant={"default"}
+                className={cn(
+                  "flex gap-2 items-center",
+                  proxyList.length === 0 ? "animate-bounce" : ""
+                )}
+                onClick={() => {
+                  setOpenSide(true);
+                }}
+              >
+                <PlusIcon className="w-4 h-4" />
+                Create New Proxy
+              </Button>
+            ) : (
+              <AddProxyToGroupDialog
+                onDone={() => {
+                  //
+                }}
+              />
+            )}
           </div>
         </div>
         <div className="mt-8 flow-root">
           <div className="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
             <div className="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
-              <table className="min-w-full divide-y divide-gray-700">
-                <thead>
-                  <tr>
-                    {/* <th
-                    scope="col"
-                    className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-white sm:pl-0"
-                  >
-                    Nickname
-                  </th> */}
-                    <th
-                      scope="col"
-                      className="px-3 py-3.5 text-left text-sm font-semibold text-white sm:pl-0"
-                    >
-                      Hostname
-                    </th>
-                    <th
-                      scope="col"
-                      className="px-3 py-3.5 text-left text-sm font-semibold text-white"
-                    >
-                      Application Port
-                    </th>
-                    {/* <th
-                    scope="col"
-                    className="px-3 py-3.5 text-left text-sm font-semibold text-white"
-                  >
-                    Actions
-                  </th> */}
-                    {/* <th scope="col" className="relative py-3.5 pl-3 pr-4 sm:pr-0">
-                    <span className="sr-only">Delete</span>
-                  </th> */}
-                  </tr>
-                </thead>
-
-                <tbody className="divide-y divide-gray-800">
-                  {list.map((endpoint) => (
-                    <tr key={endpoint.nickname}>
-                      {/* <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-white sm:pl-0">
-                      {endpoint.nickname}
-                    </td> */}
-                      <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-white sm:pl-0">
+              <Table>
+                <TableCaption>A list of your recent invoices.</TableCaption>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead className="w-[400px]">Hostname</TableHead>
+                    <TableHead>Application Port</TableHead>
+                    <TableHead className="text-right">Action</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {proxyList.map((proxyItem) => (
+                    <TableRow key={proxyItem.hostname}>
+                      <TableCell className="font-medium">
                         <Tooltip>
                           <TooltipTrigger asChild>
                             <a
                               className="p-2 underline cursor-pointer text-sm sm:pl-0"
-                              href={`https://${endpoint.hostname}`}
+                              href={`https://${proxyItem.hostname}`}
                               target="_blank"
                             >
-                              {endpoint.hostname}
+                              {proxyItem.hostname}
                             </a>
                           </TooltipTrigger>
                           <TooltipContent side="right">
                             <p>Click to open on browser.</p>
                           </TooltipContent>
                         </Tooltip>
-                      </td>
-                      <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-300">
-                        {endpoint.port}
-                      </td>
-                      <td className="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-0">
-                        <div className="flex gap-6 justify-end">
-                          <p
+                      </TableCell>
+                      <TableCell>{proxyItem.port}</TableCell>
+
+                      <TableCell className="text-right">
+                        {/* <p
+                          onClick={() => {
+                            openCert(proxyItem);
+                          }}
+                          className="text-indigo-400 hover:text-indigo-300 cursor-pointer"
+                        >
+                          Locate Cert
+                        </p> */}
+                        {selectedGroup?.isNoGroup ? (
+                          <Button
+                            size={"sm"}
+                            variant={"destructive"}
                             onClick={() => {
-                              openCert(endpoint);
+                              onDeleteEndpoint(proxyItem);
                             }}
-                            className="text-indigo-400 hover:text-indigo-300 cursor-pointer"
-                          >
-                            Locate Cert
-                            <span className="sr-only">, {endpoint.name}</span>
-                          </p>
-                          <p
-                            onClick={() => {
-                              onDeleteEndpoint(endpoint);
-                            }}
-                            className="text-red-400 hover:text-red-300 cursor-pointer"
                           >
                             Delete
-                            <span className="sr-only">, {endpoint.name}</span>
-                          </p>
-                        </div>
-                      </td>
-                    </tr>
+                          </Button>
+                        ) : (
+                          <Button
+                            size={"sm"}
+                            variant={"ghost"}
+                            onClick={() => {
+                              if (!selectedGroup) return;
+                              removeProxyFromGroup(proxyItem, selectedGroup);
+                            }}
+                          >
+                            Remove from Group
+                          </Button>
+                        )}
+                      </TableCell>
+                    </TableRow>
                   ))}
-                </tbody>
-              </table>
+                </TableBody>
+              </Table>
             </div>
           </div>
         </div>

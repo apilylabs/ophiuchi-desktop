@@ -86,7 +86,7 @@ export default function ProxyListComponent() {
               }}
             />
           </div>
-          <ProxyListTable list={proxyList} />
+          <ProxyListTable />
         </div>
       </div>
     </TooltipProvider>
