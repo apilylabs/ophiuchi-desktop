@@ -6,10 +6,9 @@ import {
   writeTextFile,
 } from "@tauri-apps/api/fs";
 import { IFileManagerBase } from "../file-manager";
-import { createGroupIfNotExists } from "./migration/001-create-group";
-
-const CONFIG_DIR = "Config";
-const FILE_NAME = "app.endpoint.json";
+import { CONFIG_DIR, GROUP_FILE_NAME, PROXY_FILE_NAME } from "./constants";
+import { IProxyData, IProxyGroupData } from "./interfaces";
+import { m001_createGroupIfNotExists } from "./migration/001-create-group";
 
 let mgr: ProxyManager | undefined = undefined;
 
@@ -34,35 +33,65 @@ export class ProxyManager implements IFileManagerBase {
       await createDir(CONFIG_DIR, { dir, recursive: true });
     }
     // create file if not exist
-    const fileExist = await exists(`${CONFIG_DIR}/${FILE_NAME}`, { dir });
+    const fileExist = await exists(`${CONFIG_DIR}/${PROXY_FILE_NAME}`, { dir });
     if (!fileExist) {
-      await writeTextFile(`${CONFIG_DIR}/${FILE_NAME}`, JSON.stringify([]), {
-        dir,
-      });
+      await writeTextFile(
+        `${CONFIG_DIR}/${PROXY_FILE_NAME}`,
+        JSON.stringify([]),
+        {
+          dir,
+        }
+      );
     }
+
+    await this.migrate();
   }
 
   async migrate() {
-    const bool: boolean = await new Promise((resolve, reject) => {
-      createGroupIfNotExists(mgr!);
-      resolve(true);
-    });
-    return bool;
+    await m001_createGroupIfNotExists(mgr!);
+    return true;
   }
 
-  async get() {
+  async getProxies() {
     const dir = this.getBaseDir();
-    const fileData = await readTextFile(`${CONFIG_DIR}/${FILE_NAME}`, {
+    const fileData = await readTextFile(`${CONFIG_DIR}/${PROXY_FILE_NAME}`, {
       dir,
     });
-    const endpointList = JSON.parse(fileData);
+    const endpointList = JSON.parse(fileData) as IProxyData[];
     return endpointList;
   }
 
-  async save(data: any) {
+  async getGroups() {
     const dir = this.getBaseDir();
-    await writeTextFile(`${CONFIG_DIR}/${FILE_NAME}`, JSON.stringify(data), {
+    const fileData = await readTextFile(`${CONFIG_DIR}/${GROUP_FILE_NAME}`, {
       dir,
     });
+    const groupList = JSON.parse(fileData) as IProxyGroupData[];
+    return groupList;
+  }
+
+  async saveProxies(data: any) {
+    const dir = this.getBaseDir();
+    await writeTextFile(
+      `${CONFIG_DIR}/${PROXY_FILE_NAME}`,
+      JSON.stringify(data),
+      {
+        dir,
+      }
+    );
+  }
+
+  async getProxyInGroup(groupName: string) {
+    const groups = await this.getGroups();
+    const proxies = await this.getProxies();
+    const identifiedGroup = groups.filter((p) => p.name === groupName);
+    const mapped = identifiedGroup.map((g) => {
+      return g.proxyHosts.map((host) => {
+        return proxies.find((p) => p.hostname === host);
+      });
+    });
+
+    console.log(mapped);
+    return mapped;
   }
 }

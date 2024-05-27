@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/popover";
 import { CertificateManager } from "@/helpers/certificate-manager";
 import { cn } from "@/lib/utils";
-import proxyListStore, { EndpointData } from "@/stores/proxy-list";
+import proxyListStore, { IProxyData } from "@/stores/proxy-list";
 import { Dialog, Transition } from "@headlessui/react";
 import {
   ArrowRightIcon,
@@ -37,11 +37,11 @@ export default function CreateProxyV2SideComponent({
 }: {
   open: boolean;
   setOpen: (open: boolean) => void;
-  onAdd: (data: EndpointData) => void;
+  onAdd: (data: IProxyData) => void;
 }) {
   const [isGenerating, setIsGenerating] = useState(false);
   const [createStep, setCreateStep] = useState<number>(0);
-  const [currentData, setCurrentData] = useState<EndpointData | null>(null);
+  const [currentData, setCurrentData] = useState<IProxyData | null>(null);
 
   const [shouldGenerateSSLCert, setShouldGenerateSSLCert] = useState(false);
   const [sslCertGenComplete, setSSLCertGenComplete] = useState(false);
@@ -55,7 +55,7 @@ export default function CreateProxyV2SideComponent({
 
   const [passwordModalShown, setPasswordModalOpen] = useState(false);
 
-  const onAddButton = useCallback(async (data: EndpointData) => {
+  const onAddButton = useCallback(async (data: IProxyData) => {
     setCreateStep(1);
     setCurrentData(data);
     //
@@ -106,7 +106,7 @@ export default function CreateProxyV2SideComponent({
   }, [currentData]);
 
   const onAddToHosts = useCallback(
-    async (endpoint: EndpointData, password: string) => {
+    async (endpoint: IProxyData, password: string) => {
       invoke("add_line_to_hosts", {
         hostname: endpoint.hostname,
         password: password,
@@ -441,7 +441,7 @@ export default function CreateProxyV2SideComponent({
 function CreateFormComponent({
   onNextButton,
 }: {
-  onNextButton: (data: EndpointData) => void;
+  onNextButton: (data: IProxyData) => void;
 }) {
   const { proxyList } = proxyListStore();
   const [hostnameExists, setHostnameExists] = useState(false);
@@ -467,7 +467,7 @@ function CreateFormComponent({
     if (!formRef.current) return;
     const formData = new FormData(formRef.current);
     const nicknameGenerated = `Proxy for ${formData.get("hostname")}`;
-    const data: EndpointData = {
+    const data: IProxyData = {
       nickname: nicknameGenerated,
       hostname: formData.get("hostname") as string,
       port: parseInt(formData.get("port") as string),
