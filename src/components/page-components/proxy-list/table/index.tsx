@@ -28,13 +28,8 @@ const people = [
 ];
 
 export default function ProxyListTable({ list }: { list: any[] }) {
-  const {
-    proxyList,
-    selectedGroup,
-    setProxyList,
-    addProxyItem,
-    setProxyGroupList,
-  } = proxyListStore();
+  const { load, proxyList, selectedGroup, setProxyList, addProxyItem } =
+    proxyListStore();
 
   const [loaded, setLoaded] = useState(false);
   const [openSide, setOpenSide] = useState(false);
@@ -73,13 +68,9 @@ export default function ProxyListTable({ list }: { list: any[] }) {
   }, []);
 
   const prepareConfigPage = useCallback(async () => {
-    const mgr = ProxyManager.sharedManager();
-    const list = await mgr.getProxies();
-    const gList = await mgr.getGroups();
-    setProxyList(list);
-    setProxyGroupList(gList);
+    load();
     setLoaded(true);
-  }, [setProxyGroupList, setProxyList]);
+  }, [load]);
 
   useEffect(() => {
     prepareConfigPage();
@@ -91,9 +82,11 @@ export default function ProxyListTable({ list }: { list: any[] }) {
       <CreateProxyV2SideComponent
         open={openSide}
         setOpen={setOpenSide}
-        onAdd={(data) => {
-          setCurrentEndpoint(data);
-          addProxyItem(data);
+        onAddDone={(data) => {
+          if (selectedGroup) {
+            setCurrentEndpoint(data);
+            addProxyItem(data, selectedGroup);
+          }
         }}
       />
       <RequestPasswordModal

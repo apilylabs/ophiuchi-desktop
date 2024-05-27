@@ -10,8 +10,9 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { CertificateManager } from "@/helpers/certificate-manager";
+import { IProxyData } from "@/helpers/proxy-manager/interfaces";
 import { cn } from "@/lib/utils";
-import proxyListStore, { IProxyData } from "@/stores/proxy-list";
+import proxyListStore from "@/stores/proxy-list";
 import { Dialog, Transition } from "@headlessui/react";
 import {
   ArrowRightIcon,
@@ -33,11 +34,11 @@ const certMgr = CertificateManager.shared();
 export default function CreateProxyV2SideComponent({
   open,
   setOpen,
-  onAdd: onAddFinish,
+  onAddDone: onAddFinish,
 }: {
   open: boolean;
   setOpen: (open: boolean) => void;
-  onAdd: (data: IProxyData) => void;
+  onAddDone: (data: IProxyData) => void;
 }) {
   const [isGenerating, setIsGenerating] = useState(false);
   const [createStep, setCreateStep] = useState<number>(0);

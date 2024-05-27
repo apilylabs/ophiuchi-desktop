@@ -7,7 +7,7 @@ export type IProxyData = {
 export type IProxyGroupData = {
   id: string;
   name: string;
-  proxyHosts: string[] | IProxyData[];
+  proxyHosts: (string | IProxyData)[];
   createdAt: string;
   updatedAt: string;
 };

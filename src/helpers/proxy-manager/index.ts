@@ -70,6 +70,31 @@ export class ProxyManager implements IFileManagerBase {
     return groupList;
   }
 
+  async saveGroups(data: IProxyGroupData[]) {
+    const dir = this.getBaseDir();
+
+    const cleaned: IProxyGroupData[] = data.map((d) => {
+      const cleanedProxyHosts = d.proxyHosts.map((p) => {
+        if (typeof p === "object") {
+          return (p as IProxyData).hostname;
+        }
+        return p;
+      });
+      return {
+        ...d,
+        updatedAt: new Date().toISOString(),
+        proxyHosts: cleanedProxyHosts,
+      };
+    });
+    await writeTextFile(
+      `${CONFIG_DIR}/${GROUP_FILE_NAME}`,
+      JSON.stringify(cleaned),
+      {
+        dir,
+      }
+    );
+  }
+
   async saveProxies(data: any) {
     const dir = this.getBaseDir();
     await writeTextFile(
