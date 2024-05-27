@@ -144,6 +144,9 @@ export default function CreateProxyV2SideComponent({
           if (!currentData) return;
           onAddToHosts(currentData, password);
         }}
+        onClose={function (): void {
+          setPasswordModalOpen(false);
+        }}
       />
       <Transition.Root show={open} as={Fragment}>
         <Dialog
@@ -446,7 +449,7 @@ function CreateFormComponent({
 }: {
   onNextButton: (data: IProxyData) => void;
 }) {
-  const { proxyList } = proxyListStore();
+  const { proxyList, totalProxyList } = proxyListStore();
   const [hostnameExists, setHostnameExists] = useState(false);
 
   const formRef = useRef<HTMLFormElement>(null);
@@ -456,10 +459,10 @@ function CreateFormComponent({
   const checkHostnameExists = useCallback(
     (hostname: string) => {
       setHostnameExists(
-        proxyList.some((endpoint) => endpoint.hostname === hostname)
+        totalProxyList.some((endpoint) => endpoint.hostname === hostname)
       );
     },
-    [proxyList]
+    [totalProxyList]
   );
 
   const fixHostname = (hostname: string) => {

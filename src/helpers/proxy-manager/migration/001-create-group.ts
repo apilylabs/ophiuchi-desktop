@@ -4,10 +4,9 @@ import {
   CONFIG_DIR,
   DEFAULT_PROXY_GROUP_ID,
   DEFAULT_PROXY_GROUP_NAME,
+  GROUP_FILE_NAME,
 } from "../constants";
 import { IProxyGroupData } from "../interfaces";
-
-const FILE_NAME = "app.endpoint.group.json";
 
 export async function m001_createGroupIfNotExists(mgrInstance: ProxyManager) {
   const dir = mgrInstance.getBaseDir();
@@ -16,7 +15,7 @@ export async function m001_createGroupIfNotExists(mgrInstance: ProxyManager) {
     await createDir(CONFIG_DIR, { dir, recursive: true });
   }
   // create group file if not exists
-  const fileExist = await exists(`${CONFIG_DIR}/${FILE_NAME}`, { dir });
+  const fileExist = await exists(`${CONFIG_DIR}/${GROUP_FILE_NAME}`, { dir });
   if (!fileExist) {
     const proxies = await mgrInstance.getProxies();
     const defaultGroup: IProxyGroupData = {
@@ -27,7 +26,7 @@ export async function m001_createGroupIfNotExists(mgrInstance: ProxyManager) {
       updatedAt: new Date().toISOString(),
     };
     await writeTextFile(
-      `${CONFIG_DIR}/${FILE_NAME}`,
+      `${CONFIG_DIR}/${GROUP_FILE_NAME}`,
       JSON.stringify([defaultGroup]),
       {
         dir,

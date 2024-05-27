@@ -92,18 +92,27 @@ const proxyListStore = create<ProxyListStore>((set, get) => ({
       // already exists
       return;
     }
-    const _groupList = await mgr.getGroups();
 
+    // add to proxy list
     _proxyList.push(data);
-    mgr.saveProxies(_proxyList);
-    // update group
 
+    // save proxy list
+    await mgr.saveProxies(_proxyList);
+
+    // manipulate group
+    const _groupList = await mgr.getGroups();
+    debugger;
     const targetGroup = _groupList.find((el) => el.id === group.id);
+
     targetGroup!.proxyHosts.push(data.hostname);
-    mgr.saveGroups(_groupList);
+    await mgr.saveGroups(_groupList);
+
+    const filteredList = filterProxyFromGroup(_proxyList, targetGroup!);
+
     set({
-      proxyList: filterProxyFromGroup(_proxyList, group),
+      proxyList: filteredList,
       totalProxyList: _proxyList,
+      groupList: _groupList,
     });
   },
   // setProxyGroupList: async (data: IProxyGroupData[]) => {
