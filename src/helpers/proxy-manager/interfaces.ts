@@ -2,6 +2,7 @@ export type IProxyData = {
   nickname: string;
   hostname: string;
   port: number;
+  createdAt: string;
 };
 
 export type IProxyGroupData = {

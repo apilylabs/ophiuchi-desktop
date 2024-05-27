@@ -477,6 +477,7 @@ function CreateFormComponent({
       nickname: nicknameGenerated,
       hostname: formData.get("hostname") as string,
       port: parseInt(formData.get("port") as string),
+      createdAt: new Date().toISOString(),
     };
     onNextButton(data);
   }, [onNextButton]);
@@ -516,6 +517,7 @@ function CreateFormComponent({
             type="text"
             name="hostname"
             required={true}
+            maxLength={64}
             className={cn(
               hostnameExists
                 ? "border-red-500 text-red-400"
