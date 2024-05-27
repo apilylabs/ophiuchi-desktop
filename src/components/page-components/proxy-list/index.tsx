@@ -17,8 +17,7 @@ import { ProxyGroupSelect } from "./group-select";
 import ProxyListTable from "./table";
 
 export default function EndpointListComponent() {
-  const { proxyList, selectedGroup, setProxyList, addProxyItem } =
-    proxyListStore();
+  const { proxyList, selectedGroup, setProxyList } = proxyListStore();
 
   const openAppData = useCallback(async () => {
     const appDataDirPath = await appDataDir();

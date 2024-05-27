@@ -29,8 +29,7 @@ const people = [
 ];
 
 export default function ProxyListTable({ list }: { list: any[] }) {
-  const { load, proxyList, selectedGroup, setProxyList, addProxyItem } =
-    proxyListStore();
+  const { load, proxyList, selectedGroup, setProxyList } = proxyListStore();
 
   const [loaded, setLoaded] = useState(false);
   const [openSide, setOpenSide] = useState(false);
@@ -80,16 +79,7 @@ export default function ProxyListTable({ list }: { list: any[] }) {
 
   return (
     <>
-      <CreateProxyV2SideComponent
-        open={openSide}
-        setOpen={setOpenSide}
-        onAddDone={(data) => {
-          if (selectedGroup) {
-            setCurrentEndpoint(data);
-            addProxyItem(data, selectedGroup);
-          }
-        }}
-      />
+      <CreateProxyV2SideComponent open={openSide} setOpen={setOpenSide} />
       <RequestPasswordModal
         description={"Ophiuchi wants to edit: /etc/hosts."}
         isOpen={passwordModalShown}
@@ -116,7 +106,7 @@ export default function ProxyListTable({ list }: { list: any[] }) {
         <div className="sm:flex sm:items-center">
           <div className="sm:flex-auto">
             <Label className="font-medium leading-6 text-white">
-              Your Proxies in {selectedGroup?.name ?? "Default Group"}
+              Proxy Group - {selectedGroup?.name ?? "Default Group"}
             </Label>
             <p className="mt-2 text-sm text-gray-300">
               List of proxies that are in the selected group.

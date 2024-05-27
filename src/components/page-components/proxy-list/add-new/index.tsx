@@ -34,12 +34,11 @@ const certMgr = CertificateManager.shared();
 export default function CreateProxyV2SideComponent({
   open,
   setOpen,
-  onAddDone: onAddFinish,
 }: {
   open: boolean;
   setOpen: (open: boolean) => void;
-  onAddDone: (data: IProxyData) => void;
 }) {
+  const { addProxyItem, selectedGroup } = proxyListStore();
   const [isGenerating, setIsGenerating] = useState(false);
   const [createStep, setCreateStep] = useState<number>(0);
   const [currentData, setCurrentData] = useState<IProxyData | null>(null);
@@ -408,8 +407,11 @@ export default function CreateProxyV2SideComponent({
                                     current: generateNginxConfDone,
                                     string: "Close",
                                     onClick: function (): void {
-                                      if (currentData) {
-                                        onAddFinish(currentData);
+                                      if (currentData && selectedGroup) {
+                                        addProxyItem(
+                                          currentData,
+                                          selectedGroup
+                                        );
                                       }
                                       resetAndClose();
                                     },
