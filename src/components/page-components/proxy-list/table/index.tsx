@@ -1,4 +1,5 @@
 import { Button } from "@/components/ui/button";
+import Code from "@/components/ui/code";
 import {
   Table,
   TableBody,
@@ -26,6 +27,7 @@ import { open as shellOpen } from "@tauri-apps/api/shell";
 import { useCallback, useEffect, useState } from "react";
 import CreateProxyV2SideComponent from "../add-new";
 import { AddProxyToGroupDialog } from "../add-new/proxy-to-group";
+import { EditGroupDialog } from "../edit/group";
 import RequestPasswordModal from "../request-certificate-trust";
 
 const people = [
@@ -117,9 +119,13 @@ export default function ProxyListTable() {
         <div className="sm:flex sm:items-center">
           <div className="sm:flex-auto">
             <Label className="font-medium leading-6 text-white">
-              {selectedGroup?.isNoGroup
-                ? "Proxy List"
-                : "Proxy Group - " + selectedGroup?.name}
+              {selectedGroup?.isNoGroup ? (
+                "Proxy List"
+              ) : (
+                <>
+                  Proxy Group - {selectedGroup?.name} <EditGroupDialog />
+                </>
+              )}
             </Label>
           </div>
           <div className="mt-4 sm:ml-16 sm:mt-0 sm:flex-none">
@@ -203,16 +209,29 @@ export default function ProxyListTable() {
                             Delete
                           </Button>
                         ) : (
-                          <Button
-                            size={"sm"}
-                            variant={"ghost"}
-                            onClick={() => {
-                              if (!selectedGroup) return;
-                              removeProxyFromGroup(proxyItem, selectedGroup);
-                            }}
-                          >
-                            Remove from Group
-                          </Button>
+                          <Tooltip>
+                            <TooltipTrigger asChild>
+                              <Button
+                                size={"sm"}
+                                variant={"ghost"}
+                                onClick={() => {
+                                  if (!selectedGroup) return;
+                                  removeProxyFromGroup(
+                                    proxyItem,
+                                    selectedGroup
+                                  );
+                                }}
+                              >
+                                Remove from Group
+                              </Button>
+                            </TooltipTrigger>
+                            <TooltipContent side="right">
+                              <p>
+                                Remove this proxy from the group{" "}
+                                <Code>{selectedGroup?.name}</Code>
+                              </p>
+                            </TooltipContent>
+                          </Tooltip>
                         )}
                       </TableCell>
                     </TableRow>

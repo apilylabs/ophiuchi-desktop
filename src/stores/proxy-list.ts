@@ -16,7 +16,7 @@ interface ProxyListStore {
   addProxyItem: (data: IProxyData, group: IProxyGroupData) => void;
   addGroup: (groupName: string) => void;
   removeGroup: (groupId: string) => Promise<string | void>;
-
+  updateGroup: (group: IProxyGroupData) => void;
   addProxyToGroup: (proxy: IProxyData, group: IProxyGroupData) => void;
   removeProxyFromGroup: (proxy: IProxyData, group: IProxyGroupData) => void;
   setSelectedGroup: (group: IProxyGroupData) => void;
@@ -78,17 +78,28 @@ const proxyListStore = create<ProxyListStore>((set, get) => ({
     mgr.saveGroups(_groupList);
   },
   removeGroup: async (groupId: string) => {
-    // if group is already selected, stop removing
-    if (get().selectedGroup?.id === groupId) {
-      return "Cannot remove selected group.";
-    }
+    // const mgr = ProxyManager.sharedManager();
+    // const _groupList = await mgr.getGroups();
+    // const _proxyList = await mgr.getProxies();
+    // const index = _groupList.findIndex((el) => el.id === groupId);
+    // _groupList.splice(index, 1);
+    // set({ groupList: _groupList });
+    // const filteredList = _proxyList.filter((el) =>
+    //   _groupList.find((e) => e.id === groupId)?.includedHosts.find(
+    //     (e) => e === el.hostname
+    //   )
+    // );
+    // set({ proxyList: filteredList });
+    // await mgr.saveGroups(_groupList);
+  },
+  updateGroup: async (group: IProxyGroupData) => {
     const mgr = ProxyManager.sharedManager();
     const _groupList = await mgr.getGroups();
-    const groupIndex = _groupList.findIndex((el) => el.id === groupId);
-    _groupList.splice(groupIndex, 1);
-    // remove from proxyList
-    mgr.saveGroups(_groupList);
-    set({ groupList: _groupList, proxyList: [] });
+    const groupIndex = _groupList.findIndex((el) => el.id === group.id);
+    group.updatedAt = new Date().toISOString();
+    _groupList[groupIndex] = group;
+    await mgr.saveGroups(_groupList);
+    set({ groupList: _groupList });
   },
   addProxyItem: async (data: IProxyData, group: IProxyGroupData) => {
     const mgr = ProxyManager.sharedManager();
