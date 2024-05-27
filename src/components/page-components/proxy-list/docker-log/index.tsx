@@ -63,7 +63,7 @@ export default function DockerLogModal({
                     Docker Command Log
                   </Dialog.Title>
                   <div className="mt-2">
-                    <div className="h-[50%] max-h-[400px] overflow-y-auto bg-gray-50 p-8 min-h-[400px]">
+                    <div className="h-[50%] max-h-[400px] overflow-y-auto bg-zinc-50 p-8 min-h-[400px]">
                       <code className="text-sm text-gray-500 whitespace-pre-wrap ">
                         {stream}
                       </code>

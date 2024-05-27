@@ -21,13 +21,13 @@ export default function MultiStateButton({
   function bgColor() {
     if (done.current) return "";
     if (ready.current) return "bg-yellow-500 animate-bounce";
-    if (notReady.current) return "bg-gray-600 cursor-not-allowed";
+    if (notReady.current) return "bg-zinc-600 cursor-not-allowed";
   }
 
   function hoverBgColor() {
-    if (done.current) return "hover:bg-gray-600";
+    if (done.current) return "hover:bg-zinc-600";
     if (ready.current) return "hover:bg-yellow-600";
-    if (notReady.current) return "hover:bg-gray-600";
+    if (notReady.current) return "hover:bg-zinc-600";
   }
 
   function textColor() {

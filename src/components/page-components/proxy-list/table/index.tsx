@@ -113,15 +113,14 @@ export default function ProxyListTable() {
           setProxyList(copiedList);
         }}
       />
-      <div className="px-4 border border-zinc-700 rounded-md py-4">
+      <div className="px-6 border border-zinc-700 rounded-md py-6">
         <div className="sm:flex sm:items-center">
           <div className="sm:flex-auto">
             <Label className="font-medium leading-6 text-white">
-              Proxy Group - {selectedGroup?.name ?? "Default Group"}
+              {selectedGroup?.isNoGroup
+                ? "Proxy List"
+                : "Proxy Group - " + selectedGroup?.name}
             </Label>
-            <p className="mt-2 text-sm text-gray-300">
-              List of proxies that are in the selected group.
-            </p>
           </div>
           <div className="mt-4 sm:ml-16 sm:mt-0 sm:flex-none">
             {selectedGroup?.isNoGroup ? (
@@ -151,7 +150,11 @@ export default function ProxyListTable() {
           <div className="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
             <div className="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
               <Table>
-                <TableCaption>A list of your recent invoices.</TableCaption>
+                <TableCaption>
+                  {selectedGroup?.isNoGroup
+                    ? "A list of your current proxies."
+                    : `A list of proxies in group - ${selectedGroup?.name}`}
+                </TableCaption>
                 <TableHeader>
                   <TableRow>
                     <TableHead className="w-[400px]">Hostname</TableHead>
