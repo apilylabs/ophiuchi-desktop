@@ -15,7 +15,6 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { CertificateManager } from "@/helpers/certificate-manager";
-import { ProxyManager } from "@/helpers/proxy-manager";
 import { IProxyData } from "@/helpers/proxy-manager/interfaces";
 import { cn } from "@/lib/utils";
 import proxyListStore from "@/stores/proxy-list";
@@ -41,8 +40,13 @@ const people = [
 ];
 
 export default function ProxyListTable() {
-  const { load, proxyList, selectedGroup, setProxyList, removeProxyFromGroup } =
-    proxyListStore();
+  const {
+    load,
+    proxyList,
+    selectedGroup,
+    removeProxyFromList,
+    removeProxyFromGroup,
+  } = proxyListStore();
 
   const [loaded, setLoaded] = useState(false);
   const [openSide, setOpenSide] = useState(false);
@@ -100,19 +104,11 @@ export default function ProxyListTable() {
           setPasswordModalOpen(false);
           if (!currentEndpoint) return;
           onDeleteFromHosts(currentEndpoint, password);
-          const endpointManager = ProxyManager.sharedManager();
           const configHelper = new CertificateManager();
           configHelper.deleteCertificateFiles(currentEndpoint.hostname);
           configHelper.deleteNginxConfigurationFiles(currentEndpoint.hostname);
 
-          const copiedList = [...proxyList];
-          const index = copiedList.findIndex((e: IProxyData) => {
-            return e.hostname === currentEndpoint.hostname;
-          });
-          copiedList.splice(index, 1);
-
-          endpointManager.saveProxies(copiedList);
-          setProxyList(copiedList);
+          removeProxyFromList(currentEndpoint);
         }}
       />
       <div className="px-6 border border-zinc-700 rounded-md py-6">
