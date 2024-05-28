@@ -1,5 +1,6 @@
 # auto generated docker-compose.yml 
 version: '3'
+name: "devophiuchidesktop"
 services:
   nginx:
     image: nginx:1.23.2-alpine
@@ -12,3 +13,5 @@ services:
       - ./conf/conf.d:/etc/nginx/conf.d
       - ./cert:/usr/local/ssl/cert
     container_name: ophiuchi-nginx
+    networks:
+      - devophiuchidesktop_default
