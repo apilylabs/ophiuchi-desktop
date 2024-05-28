@@ -36,7 +36,7 @@ export function EditGroupDialog() {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button variant={"ghost"} size={"xs"} className="">
+        <Button variant={"ghost"} size={"xs"} className="flex">
           Edit
         </Button>
         {/* <Button variant="outline" className="w-full">

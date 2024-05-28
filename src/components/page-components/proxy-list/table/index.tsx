@@ -122,9 +122,12 @@ export default function ProxyListTable() {
               {selectedGroup?.isNoGroup ? (
                 "Proxy List"
               ) : (
-                <>
-                  Proxy Group - {selectedGroup?.name} <EditGroupDialog />
-                </>
+                <div className="flex gap-2 items-center">
+                  <div>Proxy Group - {selectedGroup?.name}</div>
+                  <div className="flex">
+                    <EditGroupDialog />
+                  </div>
+                </div>
               )}
             </Label>
           </div>

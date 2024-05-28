@@ -206,7 +206,7 @@ export default function DockerControl({}: {}) {
         className={cn(dockerNeedsRestart ? "animate-bounce" : "")}
         disabled={proxyList.length === 0}
       >
-        {dockerNeedsRestart ? "Restart Docker To Apply" : "Start Docker "}
+        {dockerNeedsRestart ? "Click To Apply" : "Start Container "}
       </Button>
       <DockerLogModal
         stream={dockerProcessStream}
