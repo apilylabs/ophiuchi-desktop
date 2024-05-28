@@ -29,16 +29,6 @@ import { AddProxyToGroupDialog } from "../add-new/proxy-to-group";
 import { EditGroupDialog } from "../edit/group";
 import RequestPasswordModal from "../request-certificate-trust";
 
-const people = [
-  {
-    name: "Lindsay Walton",
-    title: "Front-end Developer",
-    email: "lindsay.walton@example.com",
-    role: "Member",
-  },
-  // More people...
-];
-
 export default function ProxyListTable() {
   const {
     load,
