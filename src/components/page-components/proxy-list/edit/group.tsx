@@ -9,12 +9,20 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 import proxyListStore from "@/stores/proxy-list";
+import { TrashIcon } from "@heroicons/react/24/outline";
 import { Label } from "@radix-ui/react-label";
+import { PopoverClose } from "@radix-ui/react-popover";
+
 import React, { useEffect } from "react";
 
 export function EditGroupDialog() {
-  const { selectedGroup, updateGroup } = proxyListStore();
+  const { selectedGroup, updateGroup, deleteGroup } = proxyListStore();
   const [groupName, setGroupName] = React.useState("");
   const [open, setOpen] = React.useState(false);
 
@@ -56,7 +64,45 @@ export function EditGroupDialog() {
             />
           </div>
         </div>
-        <DialogFooter>
+        <DialogFooter className="flex w-full sm:justify-between items-center">
+          <Popover>
+            <PopoverTrigger asChild>
+              <Button type="button" variant={"ghost"}>
+                <TrashIcon className="w-4 h-4" />
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent className="w-80">
+              <div className="grid gap-4">
+                <div className="space-y-2">
+                  <h4 className="font-medium leading-none">
+                    Delete {selectedGroup?.name}?
+                  </h4>
+                  <p className="text-sm text-muted-foreground">
+                    This action cannot be undone.
+                  </p>
+                </div>
+                <div className="flex gap-2 justify-end">
+                  <PopoverClose asChild>
+                    <Button variant="outline" size="sm">
+                      Cancel
+                    </Button>
+                  </PopoverClose>
+                  <PopoverClose asChild>
+                    <Button
+                      variant="destructive"
+                      size="sm"
+                      onClick={() => {
+                        deleteGroup(selectedGroup.id);
+                      }}
+                    >
+                      Delete
+                    </Button>
+                  </PopoverClose>
+                </div>
+              </div>
+            </PopoverContent>
+          </Popover>
+
           <Button
             type="submit"
             disabled={!groupName || groupName.length === 0}

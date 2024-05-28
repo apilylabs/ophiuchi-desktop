@@ -132,6 +132,7 @@ export default function ProxyListTable() {
             {selectedGroup?.isNoGroup ? (
               <Button
                 variant={"default"}
+                size="sm"
                 className={cn(
                   "flex gap-2 items-center",
                   proxyList.length === 0 ? "animate-bounce" : ""
