@@ -28,8 +28,9 @@ export default function ProxyListComponent() {
     <TooltipProvider delayDuration={0}>
       <div className="flex flex-col min-h-screen text-gray-100 bg-zinc-900">
         <div className="">
-          <div className="flex justify-between w-full fixed top-0 left-0 right-0 bg-zinc-700 px-6 py-4 ">
-            <div className="flex gap-2 items-center">
+          <div className="flex justify-between w-full fixed top-0 left-0 right-0 bg-zinc-700 px-6 py-2 ">
+            <div className="flex items-center">Ophiuchi</div>
+            {/* <div className="flex gap-2 items-center">
               <Tooltip>
                 <TooltipTrigger asChild>
                   <div
@@ -45,7 +46,7 @@ export default function ProxyListComponent() {
                   <p>Opens the folder where docker-compose.yml is located.</p>
                 </TooltipContent>
               </Tooltip>
-            </div>
+            </div> */}
             <div className="flex gap-2 items-center">
               <Tooltip>
                 <TooltipTrigger asChild>
