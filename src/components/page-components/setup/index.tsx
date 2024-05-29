@@ -129,6 +129,7 @@ export function SetupComponent() {
             .
           </p>
         </div>
+        {/* <Test_PasswordComponent /> */}
       </div>
     </div>
   );

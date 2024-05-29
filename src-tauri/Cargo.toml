@@ -20,6 +20,8 @@ serde = { version = "1.0", features = ["derive"] }
 tauri = { version = "1.4.0", features = [ "dialog-message", "fs-remove-file", "fs-remove-dir", "dialog-confirm", "shell-execute", "shell-open", "path-all", "fs-create-dir", "fs-exists", "fs-read-dir", "fs-read-file", "fs-copy-file", "fs-write-file"] }
 sentry-tauri = "0.2"
 chrono = "0.4.38"
+security-framework = "2.11.0"
+
 
 [dependencies.fix-path-env]
 git = "https://github.com/tauri-apps/fix-path-env-rs"
