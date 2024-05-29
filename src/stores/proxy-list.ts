@@ -34,6 +34,19 @@ function filterProxyFromGroup(allList: IProxyData[], group: IProxyGroupData) {
   });
 }
 
+function removeProxyItemFromGroupList(
+  groupList: IProxyGroupData[],
+  proxy: IProxyData
+) {
+  return groupList.map((group) => {
+    const index = group.includedHosts.findIndex((el) => el === proxy.hostname);
+    if (index !== -1) {
+      group.includedHosts.splice(index, 1);
+    }
+    return group;
+  });
+}
+
 const proxyListStore = create<ProxyListStore>((set, get) => ({
   totalProxyList: [],
   proxyList: [],
@@ -62,10 +75,13 @@ const proxyListStore = create<ProxyListStore>((set, get) => ({
   removeProxyFromList: async (proxy: IProxyData) => {
     const mgr = ProxyManager.sharedManager();
     const _proxyList = await mgr.getProxies();
+    const _groupList = await mgr.getGroups();
     const index = _proxyList.findIndex((el) => el.hostname === proxy.hostname);
     _proxyList.splice(index, 1);
     await mgr.saveProxies(_proxyList);
     const filteredList = filterProxyFromGroup(_proxyList, get().selectedGroup!);
+    const updatedGroupList = removeProxyItemFromGroupList(_groupList, proxy);
+    await mgr.saveGroups(updatedGroupList);
     set({ proxyList: filteredList, totalProxyList: _proxyList });
   },
   addGroup: async (groupName: string) => {
