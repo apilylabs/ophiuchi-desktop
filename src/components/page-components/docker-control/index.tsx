@@ -1,4 +1,10 @@
+import DockerIcon from "@/components/icons/docker";
 import { Button } from "@/components/ui/button";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { CertificateManager } from "@/helpers/certificate-manager";
 import { cn } from "@/lib/utils";
 import proxyListStore from "@/stores/proxy-list";
@@ -195,19 +201,31 @@ export default function DockerControl({}: {}) {
 
   return (
     <>
-      <Button
-        variant={"default"}
-        onClick={() => {
-          if (proxyList.length === 0) {
-            return;
-          }
-          startDocker();
-        }}
-        className={cn(dockerNeedsRestart ? "animate-bounce" : "")}
-        disabled={proxyList.length === 0}
-      >
-        {dockerNeedsRestart ? "Click To Apply" : "Start Container "}
-      </Button>
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <Button
+            variant={"default"}
+            size="sm"
+            onClick={() => {
+              if (proxyList.length === 0) {
+                return;
+              }
+              startDocker();
+            }}
+            className={cn(dockerNeedsRestart ? "animate-bounce" : "")}
+            disabled={proxyList.length === 0}
+          >
+            <span className="flex items-center gap-2">
+              <DockerIcon className="w-4 h-4" />
+              Start Container
+            </span>
+          </Button>
+        </TooltipTrigger>
+        <TooltipContent side="bottom" sideOffset={12}>
+          <p>Start docker container.</p>
+        </TooltipContent>
+      </Tooltip>
+
       <DockerLogModal
         stream={dockerProcessStream}
         detailedStream={detailedLog}

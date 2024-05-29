@@ -84,6 +84,22 @@ export default function ProxyListTable() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  function tableCaption() {
+    if (selectedGroup?.isNoGroup) {
+      return "A list of your current proxies.";
+    }
+
+    if (proxyList.length === 0) {
+      return (
+        <div className="text-yellow-200">
+          Add existing proxy in this group to start container for this group!
+        </div>
+      );
+    } else {
+      return "A list of proxies in this group.";
+    }
+  }
+
   return (
     <>
       <CreateProxyV2SideComponent open={openSide} setOpen={setOpenSide} />
@@ -146,11 +162,7 @@ export default function ProxyListTable() {
           <div className="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
             <div className="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
               <Table>
-                <TableCaption>
-                  {selectedGroup?.isNoGroup
-                    ? "A list of your current proxies."
-                    : `A list of proxies in group - ${selectedGroup?.name}`}
-                </TableCaption>
+                <TableCaption>{tableCaption()}</TableCaption>
                 <TableHeader>
                   <TableRow>
                     <TableHead className="w-[400px]">Hostname</TableHead>

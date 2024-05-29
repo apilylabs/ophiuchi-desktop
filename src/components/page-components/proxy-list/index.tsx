@@ -30,7 +30,6 @@ export default function ProxyListComponent() {
         <div className="">
           <div className="flex justify-between w-full fixed top-0 left-0 right-0 bg-zinc-700 px-6 py-4 ">
             <div className="flex gap-2 items-center">
-              <DockerControl />
               <Tooltip>
                 <TooltipTrigger asChild>
                   <div
@@ -80,11 +79,14 @@ export default function ProxyListComponent() {
         <div className="p-4 mt-20">
           <div className="flex flex-col gap-2 mb-4">
             <Label className="text-base font-medium">Select Group</Label>
-            <ProxyGroupSelect
-              onAddGroupButton={() => {
-                // wow!
-              }}
-            />
+            <div className="flex gap-2 items-center">
+              <ProxyGroupSelect
+                onAddGroupButton={() => {
+                  // wow!
+                }}
+              />
+              <DockerControl />
+            </div>
           </div>
           <ProxyListTable />
         </div>
