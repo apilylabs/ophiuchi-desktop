@@ -400,7 +400,7 @@ export default function CreateProxyV2SideComponent({
                                 />
                               </div> */}
                               <div className="flex justify-between items-center py-8">
-                                <p>5. Close Wizard</p>
+                                <p>4. Close Wizard</p>
                                 <MultiStateButton
                                   notReady={{
                                     current: !addToEtcHostsDone,
