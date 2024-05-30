@@ -86,7 +86,12 @@ export default function ProxyListTable() {
 
   function tableCaption() {
     if (selectedGroup?.isNoGroup) {
-      return "A list of your current proxies.";
+      return (
+        <>
+          A list of your current proxies. <br /> Press Start Container to start
+          the docker webserver.
+        </>
+      );
     }
 
     if (proxyList.length === 0) {
@@ -96,7 +101,13 @@ export default function ProxyListTable() {
         </div>
       );
     } else {
-      return "A list of proxies in this group.";
+      return (
+        <>
+          {" "}
+          list of proxies in this group. <br />
+          Press start sontainer to start the docker webserver.
+        </>
+      );
     }
   }
 

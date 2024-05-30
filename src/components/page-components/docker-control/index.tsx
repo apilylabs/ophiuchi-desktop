@@ -222,7 +222,7 @@ export default function DockerControl({}: {}) {
           </Button>
         </TooltipTrigger>
         <TooltipContent side="bottom" sideOffset={12}>
-          <p>Start docker container.</p>
+          <p>Start docker container to apply your current proxy list.</p>
         </TooltipContent>
       </Tooltip>
 
