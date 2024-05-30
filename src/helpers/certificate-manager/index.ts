@@ -28,6 +28,13 @@ export class CertificateManager {
   }
 
   async deleteNginxConfigurationFiles(hostname: string) {
+    if (
+      !(await exists(`conf/conf.d/${hostname}.conf`, {
+        dir: BaseDirectory.AppData,
+      }))
+    ) {
+      return;
+    }
     await removeFile(`conf/conf.d/${hostname}.conf`, {
       dir: BaseDirectory.AppData,
     });
