@@ -1,6 +1,6 @@
 [package]
 name = "app"
-version = "0.4.0"
+version = "0.4.1"
 description = "Ophiuchi - Developers Toolkit"
 authors = ["Jaeha Kim"]
 license = "Private"
