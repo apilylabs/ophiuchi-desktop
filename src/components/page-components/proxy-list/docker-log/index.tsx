@@ -14,6 +14,7 @@ export default function DockerLogModal({
   onClosed?: () => void;
 }) {
   const [_isOpen, setIsOpen] = useState(true);
+  const [showDetailedLog, setShowDetailedLog] = useState(false);
 
   useEffect(() => {
     setIsOpen(isOpen);
@@ -21,6 +22,7 @@ export default function DockerLogModal({
 
   function closeModal() {
     setIsOpen(false);
+    setShowDetailedLog(false);
     onClosed && onClosed();
   }
 
@@ -65,7 +67,7 @@ export default function DockerLogModal({
                   <div className="mt-2">
                     <div className="h-[50%] max-h-[400px] overflow-y-auto bg-zinc-50 p-8 min-h-[400px]">
                       <code className="text-sm text-gray-500 whitespace-pre-wrap ">
-                        {stream}
+                        {showDetailedLog ? detailedStream : stream}
                       </code>
                     </div>
                   </div>
@@ -78,6 +80,14 @@ export default function DockerLogModal({
                     >
                       Close
                     </button>
+                    <p
+                      className="text-sm text-gray-800 cursor-pointer underline"
+                      onClick={async () => {
+                        setShowDetailedLog(true);
+                      }}
+                    >
+                      See detailed logs...
+                    </p>
                     <p
                       className="text-sm text-gray-800 cursor-pointer underline"
                       onClick={async () => {

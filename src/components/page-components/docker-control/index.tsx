@@ -64,7 +64,7 @@ export default function DockerControl({}: {}) {
           resolve(true);
         } else {
           appendDockerProcessStream(
-            `🚧 Container doesn't exist. Ophiuchi start container now.`
+            `🚧 Container doesn't exist. Ophiuchi will start container now.`
           );
           resolve(false);
         }
@@ -139,6 +139,7 @@ export default function DockerControl({}: {}) {
     setDockerModalOpen(true);
     setDockerNeedsRestart(false);
     setDockerProcessStream("");
+    setDetailedLog("");
 
     const exists = await checkDockerContainerExists();
     if (exists) {
