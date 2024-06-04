@@ -5,11 +5,11 @@
   "platforms": {
     "darwin-x86_64": {
       "signature": "dW50cnVzdGVkIGNvbW1lbnQ6IHNpZ25hdHVyZSBmcm9tIHRhdXJpIHNlY3JldCBrZXkKUlVRUUhPeXZIazkyQXlha3lpUkwyR2V0NE1hNDJ2dlF6MVE0aFFSQkk1SGdLNTlZM1EzYkN4WjRhT2hINXN5ZVI2WmFlaGhZS0ljSUtBTmdyKzJ0NGtaQ3o2UVFnY2NtaGdRPQp0cnVzdGVkIGNvbW1lbnQ6IHRpbWVzdGFtcDoxNzE3NTAyNTg2CWZpbGU6T3BoaXVjaGkuYXBwLnRhci5negpIanordE00dkkwT3RRZ3hoNkxKSW5zamNTanJmUTByYlBPbm13b0RlMW1jZ214M21VY2ZJUldCaVg5a0lYTWdqajVPS2VFazN3bE9iWStGUk9OMEdCQT09Cg==",
-      "url": "https://release.ophiuchi.dev/stable/update/v1.0.0/app-x86_64.app.tar.gz"
+      "url": "https://release.ophiuchi.dev/stable/update/v1.0.0/Ophiuchi.app.tar.gz"
     },
     "darwin-aarch64": {
       "signature": "dW50cnVzdGVkIGNvbW1lbnQ6IHNpZ25hdHVyZSBmcm9tIHRhdXJpIHNlY3JldCBrZXkKUlVRUUhPeXZIazkyQXlha3lpUkwyR2V0NE1hNDJ2dlF6MVE0aFFSQkk1SGdLNTlZM1EzYkN4WjRhT2hINXN5ZVI2WmFlaGhZS0ljSUtBTmdyKzJ0NGtaQ3o2UVFnY2NtaGdRPQp0cnVzdGVkIGNvbW1lbnQ6IHRpbWVzdGFtcDoxNzE3NTAyNTg2CWZpbGU6T3BoaXVjaGkuYXBwLnRhci5negpIanordE00dkkwT3RRZ3hoNkxKSW5zamNTanJmUTByYlBPbm13b0RlMW1jZ214M21VY2ZJUldCaVg5a0lYTWdqajVPS2VFazN3bE9iWStGUk9OMEdCQT09Cg==",
-      "url": "https://github.com/username/reponame/releases/download/v1.0.0/app-aarch64.app.tar.gz"
+      "url": "https://release.ophiuchi.dev/stable/update/v1.0.0/Ophiuchi.app.tar.gz"
     }
   }
 }
