@@ -8,7 +8,7 @@ Originally created by [@cheeselemon](https://github.com/cheeselemon)
 
 ## Related Websites about Ophiuchi Desktop
 
-[Website](https://ophiuchi.netlify.app/)
+[Website](https://www.ophiuchi.dev/)
 
 [Discord Channel](https://discord.gg/fpp8kNyPtz)
 
