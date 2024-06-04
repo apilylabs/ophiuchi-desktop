@@ -1,5 +1,6 @@
 # auto generated docker-compose.yml 
 version: '3'
+name: "devophiuchidesktop"
 services:
   nginx:
     image: nginx:1.23.2-alpine

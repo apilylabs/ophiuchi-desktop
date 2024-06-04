@@ -1,3 +1,20 @@
+# Ophiuchi - Localhost SSL Proxy Server Manager
+
+
+
+Originally created by [@cheeselemon](https://github.com/cheeselemon)
+
+--- 
+
+## Related Websites about Ophiuchi Desktop
+
+[Website](https://www.ophiuchi.dev/)
+
+[Discord Channel](https://discord.gg/fpp8kNyPtz)
+
+
+# Development
+
 ```
 npm run tauri dev
 ```

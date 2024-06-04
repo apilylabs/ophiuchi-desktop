@@ -1,120 +1,260 @@
-const people = [
-  {
-    name: "Lindsay Walton",
-    title: "Front-end Developer",
-    email: "lindsay.walton@example.com",
-    role: "Member",
-  },
-  // More people...
-];
+import { Button } from "@/components/ui/button";
+import Code from "@/components/ui/code";
+import {
+  Table,
+  TableBody,
+  TableCaption,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import { CertificateManager } from "@/helpers/certificate-manager";
+import { IProxyData } from "@/helpers/proxy-manager/interfaces";
+import { cn } from "@/lib/utils";
+import proxyListStore from "@/stores/proxy-list";
+import { PlusIcon } from "@heroicons/react/24/outline";
+import { Label } from "@radix-ui/react-label";
+import { invoke } from "@tauri-apps/api";
+import { appDataDir } from "@tauri-apps/api/path";
+import { open as shellOpen } from "@tauri-apps/api/shell";
+import { useCallback, useEffect, useState } from "react";
+import CreateProxyV2SideComponent from "../add-new";
+import { AddProxyToGroupDialog } from "../add-new/proxy-to-group";
+import { EditGroupDialog } from "../edit/group";
+import RequestPasswordModal from "../request-certificate-trust";
 
-export default function EndpointListTable({
-  list,
-  onAddCertToKeychain,
-  onDeleteEndpoint,
-  onAddEndpoint,
-}: {
-  list: any[];
-  onAddCertToKeychain: (endpoint: any) => void;
-  onDeleteEndpoint: (endpoint: any) => void;
-  onAddEndpoint: () => void;
-}) {
+export default function ProxyListTable() {
+  const {
+    load,
+    proxyList,
+    selectedGroup,
+    removeProxyFromList,
+    removeProxyFromGroup,
+  } = proxyListStore();
+
+  const [loaded, setLoaded] = useState(false);
+  const [openSide, setOpenSide] = useState(false);
+  const [currentEndpoint, setCurrentEndpoint] = useState<IProxyData>();
+  const [passwordModalShown, setPasswordModalOpen] = useState(false);
+
+  const onDeleteFromHosts = useCallback(
+    async (endpoint: IProxyData, password: string) => {
+      invoke("delete_line_from_hosts", {
+        hostname: endpoint.hostname,
+        password: password,
+      });
+    },
+    []
+  );
+
+  const onDeleteEndpoint = useCallback(async (endpoint: IProxyData) => {
+    setCurrentEndpoint(endpoint);
+    const confirmed = await confirm(
+      `Are you sure to delete ${endpoint.nickname}?`
+    );
+    if (!confirmed) {
+      return;
+    }
+
+    invoke("remove_cert_from_keychain", {
+      name: `${endpoint.hostname}`,
+    });
+    setPasswordModalOpen(true);
+  }, []);
+
+  const openCert = useCallback(async (data: IProxyData) => {
+    const appDataDirPath = await appDataDir();
+    const certPath = `${appDataDirPath}/cert/${data.hostname}`;
+    shellOpen(certPath);
+  }, []);
+
+  const prepareConfigPage = useCallback(async () => {
+    load();
+    setLoaded(true);
+  }, [load]);
+
+  useEffect(() => {
+    prepareConfigPage();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  function tableCaption() {
+    if (selectedGroup?.isNoGroup) {
+      return (
+        <>
+          A list of your current proxies. <br /> Press Start Container to start
+          the docker webserver.
+        </>
+      );
+    }
+
+    if (proxyList.length === 0) {
+      return (
+        <div className="text-yellow-200">
+          Add existing proxy in this group to start container for this group!
+        </div>
+      );
+    } else {
+      return (
+        <>
+          {" "}
+          list of proxies in this group. <br />
+          Press start sontainer to start the docker webserver.
+        </>
+      );
+    }
+  }
+
   return (
-    <div className="px-4">
-      <div className="sm:flex sm:items-center">
-        <div className="sm:flex-auto">
-          <h1 className="text-base font-semibold leading-6 text-white">
-            Created Proxies
-          </h1>
-          <p className="mt-2 text-sm text-gray-300">
-            List of proxies that are currently registered.
-          </p>
+    <>
+      <CreateProxyV2SideComponent open={openSide} setOpen={setOpenSide} />
+      <RequestPasswordModal
+        description={"Ophiuchi wants to edit: /etc/hosts."}
+        isOpen={passwordModalShown}
+        onConfirm={function (password: string): void {
+          setPasswordModalOpen(false);
+          if (!currentEndpoint) return;
+          onDeleteFromHosts(currentEndpoint, password);
+          const configHelper = new CertificateManager();
+          configHelper.deleteCertificateFiles(currentEndpoint.hostname);
+          configHelper.deleteNginxConfigurationFiles(currentEndpoint.hostname);
+
+          removeProxyFromList(currentEndpoint);
+        }}
+      />
+      <div className="px-6 border border-zinc-700 rounded-md py-6">
+        <div className="sm:flex sm:items-center">
+          <div className="sm:flex-auto">
+            <Label className="font-medium leading-6 text-white">
+              {selectedGroup?.isNoGroup ? (
+                "Proxy List"
+              ) : (
+                <div className="flex gap-2 items-center">
+                  <div>Proxy Group - {selectedGroup?.name}</div>
+                  <div className="flex">
+                    <EditGroupDialog />
+                  </div>
+                </div>
+              )}
+            </Label>
+          </div>
+          <div className="mt-4 sm:ml-16 sm:mt-0 sm:flex-none">
+            {selectedGroup?.isNoGroup ? (
+              <Button
+                variant={"default"}
+                size="sm"
+                className={cn(
+                  "flex gap-2 items-center",
+                  proxyList.length === 0 ? "animate-bounce" : ""
+                )}
+                onClick={() => {
+                  setOpenSide(true);
+                }}
+              >
+                <PlusIcon className="w-4 h-4" />
+                Create New Proxy
+              </Button>
+            ) : (
+              <AddProxyToGroupDialog
+                onDone={() => {
+                  //
+                }}
+              />
+            )}
+          </div>
         </div>
-        <div className="mt-4 sm:ml-16 sm:mt-0 sm:flex-none">
-          <button
-            type="button"
-            onClick={() => onAddEndpoint()}
-            className="block rounded-md bg-indigo-500 px-3 py-2 text-center text-sm font-semibold text-white hover:bg-indigo-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500"
-          >
-            Create Proxy
-          </button>
-        </div>
-      </div>
-      <div className="mt-8 flow-root">
-        <div className="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
-          <div className="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
-            <table className="min-w-full divide-y divide-gray-700">
-              <thead>
-                <tr>
-                  <th
-                    scope="col"
-                    className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-white sm:pl-0"
-                  >
-                    Nickname
-                  </th>
-                  <th
-                    scope="col"
-                    className="px-3 py-3.5 text-left text-sm font-semibold text-white"
-                  >
-                    Hostname
-                  </th>
-                  <th
-                    scope="col"
-                    className="px-3 py-3.5 text-left text-sm font-semibold text-white"
-                  >
-                    Application Port
-                  </th>
-                  {/* <th
-                    scope="col"
-                    className="px-3 py-3.5 text-left text-sm font-semibold text-white"
-                  >
-                    Actions
-                  </th> */}
-                  {/* <th scope="col" className="relative py-3.5 pl-3 pr-4 sm:pr-0">
-                    <span className="sr-only">Delete</span>
-                  </th> */}
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-gray-800">
-                {list.map((endpoint) => (
-                  <tr key={endpoint.nickname}>
-                    <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-white sm:pl-0">
-                      {endpoint.nickname}
-                    </td>
-                    <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-300">
-                      {endpoint.hostname}
-                    </td>
-                    <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-300">
-                      {endpoint.port}
-                    </td>
-                    {/* <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-300">
-                      <p
-                        className="underline cursor-pointer"
-                        onClick={() => {
-                          onAddCertToKeychain(endpoint);
-                        }}
-                      >
-                        Trust SSL Cert
-                      </p>
-                    </td> */}
-                    <td className="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-0">
-                      <p
-                        onClick={() => {
-                          onDeleteEndpoint(endpoint);
-                        }}
-                        className="text-indigo-400 hover:text-indigo-300 cursor-pointer"
-                      >
-                        Delete
-                        <span className="sr-only">, {endpoint.name}</span>
-                      </p>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+        <div className="mt-8 flow-root">
+          <div className="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
+            <div className="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
+              <Table>
+                <TableCaption>{tableCaption()}</TableCaption>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead className="w-[400px]">Hostname</TableHead>
+                    <TableHead>Application Port</TableHead>
+                    <TableHead className="text-right">Action</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {proxyList.map((proxyItem) => (
+                    <TableRow key={proxyItem.hostname}>
+                      <TableCell className="font-medium">
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <a
+                              className="p-2 underline cursor-pointer text-sm sm:pl-0"
+                              href={`https://${proxyItem.hostname}`}
+                              target="_blank"
+                            >
+                              {proxyItem.hostname}
+                            </a>
+                          </TooltipTrigger>
+                          <TooltipContent side="right">
+                            <p>Click to open on browser.</p>
+                          </TooltipContent>
+                        </Tooltip>
+                      </TableCell>
+                      <TableCell>{proxyItem.port}</TableCell>
+
+                      <TableCell className="text-right">
+                        {/* <p
+                          onClick={() => {
+                            openCert(proxyItem);
+                          }}
+                          className="text-indigo-400 hover:text-indigo-300 cursor-pointer"
+                        >
+                          Locate Cert
+                        </p> */}
+                        {selectedGroup?.isNoGroup ? (
+                          <Button
+                            size={"sm"}
+                            variant={"destructive"}
+                            onClick={() => {
+                              onDeleteEndpoint(proxyItem);
+                            }}
+                          >
+                            Delete
+                          </Button>
+                        ) : (
+                          <Tooltip>
+                            <TooltipTrigger asChild>
+                              <Button
+                                size={"sm"}
+                                variant={"ghost"}
+                                onClick={() => {
+                                  if (!selectedGroup) return;
+                                  removeProxyFromGroup(
+                                    proxyItem,
+                                    selectedGroup
+                                  );
+                                }}
+                              >
+                                Remove from Group
+                              </Button>
+                            </TooltipTrigger>
+                            <TooltipContent side="right">
+                              <p>
+                                Remove this proxy from the group{" "}
+                                <Code>{selectedGroup?.name}</Code>
+                              </p>
+                            </TooltipContent>
+                          </Tooltip>
+                        )}
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </div>
           </div>
         </div>
       </div>
-    </div>
+    </>
   );
 }

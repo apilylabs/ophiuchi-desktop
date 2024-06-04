@@ -1,16 +1,20 @@
 import { Dialog, Transition } from "@headlessui/react";
+import { Command } from "@tauri-apps/api/shell";
 import { Fragment, useEffect, useState } from "react";
 
 export default function DockerLogModal({
   stream,
+  detailedStream,
   isOpen,
   onClosed,
 }: {
   stream: any;
+  detailedStream: any;
   isOpen: boolean;
   onClosed?: () => void;
 }) {
   const [_isOpen, setIsOpen] = useState(true);
+  const [showDetailedLog, setShowDetailedLog] = useState(false);
 
   useEffect(() => {
     setIsOpen(isOpen);
@@ -18,6 +22,7 @@ export default function DockerLogModal({
 
   function closeModal() {
     setIsOpen(false);
+    setShowDetailedLog(false);
     onClosed && onClosed();
   }
 
@@ -57,17 +62,17 @@ export default function DockerLogModal({
                     as="h3"
                     className="text-lg font-medium leading-6 text-gray-900"
                   >
-                    Process Log
+                    Docker Command Log
                   </Dialog.Title>
                   <div className="mt-2">
-                    <div className="h-[50%] max-h-[400px] overflow-y-auto bg-gray-50 p-8">
-                      <code className="text-sm text-gray-500 whitespace-pre-wrap">
-                        {stream}
+                    <div className="h-[50%] max-h-[400px] overflow-y-auto bg-zinc-50 p-8 min-h-[400px]">
+                      <code className="text-sm text-gray-500 whitespace-pre-wrap ">
+                        {showDetailedLog ? detailedStream : stream}
                       </code>
                     </div>
                   </div>
 
-                  <div className="mt-4">
+                  <div className="mt-4 flex items-center gap-4">
                     <button
                       type="button"
                       className="inline-flex justify-center rounded-md border border-transparent bg-blue-100 px-4 py-2 text-sm font-medium text-blue-900 hover:bg-blue-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
@@ -75,6 +80,24 @@ export default function DockerLogModal({
                     >
                       Close
                     </button>
+                    <p
+                      className="text-sm text-gray-800 cursor-pointer underline"
+                      onClick={async () => {
+                        setShowDetailedLog(true);
+                      }}
+                    >
+                      See detailed logs...
+                    </p>
+                    <p
+                      className="text-sm text-gray-800 cursor-pointer underline"
+                      onClick={async () => {
+                        const openDockerCmd = new Command("open-docker-app");
+                        const openDockerOutput = await openDockerCmd.execute();
+                        console.log(openDockerOutput);
+                      }}
+                    >
+                      Open Docker Desktop
+                    </p>
                   </div>
                 </Dialog.Panel>
               </Transition.Child>

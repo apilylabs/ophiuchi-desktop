@@ -1,3 +1,4 @@
+/* eslint-disable react/no-unescaped-entities */
 import { Dialog, Transition } from "@headlessui/react";
 import { ExclamationTriangleIcon } from "@heroicons/react/24/outline";
 import { Fragment, useEffect, useRef, useState } from "react";
@@ -42,7 +43,7 @@ export default function RequestPasswordModal({
           leaveFrom="opacity-100"
           leaveTo="opacity-0"
         >
-          <div className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" />
+          <div className="fixed inset-0 bg-zinc-500 bg-opacity-75 transition-opacity" />
         </Transition.Child>
 
         <div className="fixed inset-0 z-10 w-screen overflow-y-auto">
@@ -75,7 +76,8 @@ export default function RequestPasswordModal({
                       <p className="text-sm text-gray-500 leading-relaxed">
                         <span className="font-bold">{description}</span>
                         <br />
-                        Please enter your computer password to continue.
+                        <br />
+                        Please enter your machine's password to continue.
                         <br />
                         <span className="text-red-500">
                           Note: Password is never saved.
@@ -106,7 +108,7 @@ export default function RequestPasswordModal({
                   </button>
                   <button
                     type="button"
-                    className="mt-3 inline-flex w-full justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:mt-0 sm:w-auto"
+                    className="mt-3 inline-flex w-full justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-zinc-50 sm:mt-0 sm:w-auto"
                     onClick={() => setOpen(false)}
                     ref={cancelButtonRef}
                   >

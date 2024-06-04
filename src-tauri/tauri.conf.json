@@ -8,7 +8,7 @@
   },
   "package": {
     "productName": "Ophiuchi",
-    "version": "0.1.6"
+    "version": "0.5.0"
   },
   "tauri": {
     "allowlist": {
@@ -20,7 +20,7 @@
         "all": false,
         "ask": false,
         "confirm": true,
-        "message": false,
+        "message": true,
         "open": false,
         "save": false
       },
@@ -53,6 +53,26 @@
             "name": "stop-docker-compose",
             "cmd": "docker",
             "args": true
+          },
+          {
+            "name": "check-docker-container-exists",
+            "cmd": "docker",
+            "args": true
+          },
+          {
+            "name": "docker-version",
+            "cmd": "docker",
+            "args": [
+              "--version"
+            ]
+          },
+          {
+            "name": "open-docker-app",
+            "cmd": "open",
+            "args": [
+              "-a",
+              "Docker Desktop"
+            ]
           }
         ]
       }
@@ -96,7 +116,12 @@
       "csp": null
     },
     "updater": {
-      "active": false
+      "active": true,
+      "endpoints": [
+        "https://release.ophiuchi.dev/stable/update-check-v1/latest.json"
+      ],
+      "dialog": true,
+      "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IDM3NjRGMUVBRkVDMUMxMApSV1FRSE95dkhrOTJBejRlcVRBMzV0ajFkR1UvVnpPRHI1ekNYVHp6VUdHYjZOYUhYa2p2UVVhRgo="
     },
     "windows": [
       {
@@ -105,8 +130,8 @@
         "resizable": true,
         "title": "Ophiuchi",
         "width": 1200,
-        "minWidth": 480,
-        "minHeight": 640
+        "minWidth": 1024,
+        "minHeight": 768
       }
     ]
   }

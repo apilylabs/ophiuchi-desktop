@@ -10,6 +10,8 @@ import {
 import { resolveResource } from "@tauri-apps/api/path";
 import * as selfsigned from "selfsigned";
 
+let instance: CertificateManager | null = null;
+
 export class CertificateManager {
   async deleteCertificateFiles(hostname: string) {
     await removeDir(`cert/${hostname}`, {
@@ -18,7 +20,21 @@ export class CertificateManager {
     });
   }
 
+  async deleteAllNginxConfigurationFiles() {
+    await removeDir(`conf/conf.d`, {
+      dir: BaseDirectory.AppData,
+      recursive: true,
+    });
+  }
+
   async deleteNginxConfigurationFiles(hostname: string) {
+    if (
+      !(await exists(`conf/conf.d/${hostname}.conf`, {
+        dir: BaseDirectory.AppData,
+      }))
+    ) {
+      return;
+    }
     await removeFile(`conf/conf.d/${hostname}.conf`, {
       dir: BaseDirectory.AppData,
     });
@@ -74,6 +90,13 @@ export class CertificateManager {
   }
   constructor() {
     // init
+  }
+
+  public static shared(): CertificateManager {
+    if (instance === null) {
+      instance = new CertificateManager();
+    }
+    return instance;
   }
 
   public async generateCertificate(hostname: string) {

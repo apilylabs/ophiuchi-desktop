@@ -4,6 +4,6 @@ export interface IFileManagerBase {
   boot: () => Promise<void>;
   getBaseDir: () => BaseDirectory;
   migrate: () => Promise<boolean>;
-  get: () => Promise<any>;
-  save: (data: any) => Promise<any>;
+  getProxies: () => Promise<any>;
+  saveProxies: (data: any) => Promise<any>;
 }
