@@ -1,7 +1,7 @@
 {
   "name": "ophiuchi",
   "version": "0.5.0",
-  "private": true,
+  "license": "MIT",
   "scripts": {
     "tauri": "tauri",
     "dev": "next dev -p 8899",
