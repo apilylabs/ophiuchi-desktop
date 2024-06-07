@@ -18,7 +18,7 @@
       },
       "dialog": {
         "all": false,
-        "ask": false,
+        "ask": true,
         "confirm": true,
         "message": true,
         "open": false,
