@@ -4,6 +4,9 @@
 # Ophiuchi - Localhost SSL Proxy Server Manager
 
 
+![Screenshot 2024-06-10 at 11 56 57 AM](https://github.com/apilylabs/ophiuchi-desktop/assets/5467111/a5b465b6-065e-43c4-ac66-bf8a502d5bae)
+
+
 
 Originally created by [@cheeselemon](https://github.com/cheeselemon)
 
