@@ -243,7 +243,7 @@ fn main() {
   ));
 
   // Everything before here runs in both app and crash reporter processes
-  let _guard = sentry_tauri::minidump::init(&client);
+//   let _guard = sentry_tauri::minidump::init(&client);
   // Everything after here runs in only the app process
 
 

@@ -34,7 +34,30 @@ CI=true npm run tauri build
 ### Release with debuggable build
 ```
 npm run tauri build -- --debug
+```
+## Resolving Tauri Build Error: "No such file or directory (os error 2)"
 
+The error you're encountering indicates that Tauri is trying to use Rust's Cargo build system, but it cannot find the necessary Rust setup to compile the project. This is likely because either Rust is not installed, or the environment isn’t configured properly for Tauri's Rust dependencies.
+
+### Steps to Resolve
+
+### 1. Install Rust
+Tauri uses Rust, so ensure you have the Rust toolchain installed. You can install Rust using `rustup`:
+
+```bash
+curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+```
+## Set Up Tauri’s Rust Targets
+
+#### Since you are building for universal-apple-darwin, you will need to install the necessary Rust targets. Use:
+```bash
+rustup target add aarch64-apple-darwin x86_64-apple-darwin
+```
+## Run the Build Command Again
+#### After setting up Rust and the necessary targets, try running the build command again:
+
+```bash
+npm run tauri build -- --debug
 ```
 
 ### notes 
